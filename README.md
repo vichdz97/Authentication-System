@@ -1,0 +1,23 @@
+# Authentication System
+
+## Summary
+The authentication system prompts the user for their login credentials (username and password) and redirects them to the appropriate page depending on their role: user, manager, or administrator. Once redirected, the user is able to view, modify, or delete their information. If the user cannot provide their login credentials—in other words, the user does not have an account—then they can sign up and create an account.
+
+## Demo
+Click [here](authentication-system.s3-website.us-east-2.amazonaws.com) to access the live demo.
+
+## Team Members
+* [Shail Patel](https://github.com/shailpatel5)
+* [Tyler Gaynair](https://github.com/CSTyy)
+* [Victor Hernandez](https://github.com/vichdz97)
+* [Kwabena Asiama](https://github.com/kasiama1)
+
+## Technologies
+* [Java](https://www.java.com/)
+* [Spring Boot](https://spring.io/)
+* [MySQL](https://www.mysql.com)
+* [Postman](https://www.postman.com/)
+* [Angular](https://angular.io)
+* [Bootstrap](https://getbootstrap.com/)
+* [Bootstrap widgets](https://ng-bootstrap.github.io/#/home)
+* [Git](https://git-scm.com)
