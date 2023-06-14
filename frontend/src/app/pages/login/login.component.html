@@ -1,0 +1,23 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-center">
+    
+    <a id="home" class="nav-link" role="button" [routerLink]="['/home']">&larr; <i class="bi bi-house-door-fill"></i></a>
+    <h2 class="text-center">Authentication System<br>Login</h2>
+
+    <p class="text-danger">{{ alertMessage }}</p>
+
+    <div class="form-floating">
+        <input id="uname" type="text" formControlName="username" class="form-control" placeholder="username">
+        <label for="uname" class="form-label">Username</label>
+        <app-inline-error [control]="usernameControl"></app-inline-error>
+    </div>
+
+    <div class="form-floating">
+        <input id="password" type="password" formControlName="password" class="form-control" placeholder="password">
+        <label for="password" class="form-label">Password</label>
+        <app-inline-error [control]="passwordControl"></app-inline-error>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Sign in</button>
+    <a class="nav-link" role="button" [routerLink]="['/signup']">Don't have an account? Sign up!</a>
+    <a class="nav-link" role="button" [routerLink]="['/guest']">Continue as Guest</a>
+</form>

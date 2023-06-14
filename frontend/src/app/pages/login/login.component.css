@@ -1,0 +1,41 @@
+.home {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+}
+  
+form {
+    width: auto;
+    padding: 4vw 6vw;
+
+    border-radius: 25px;
+    box-shadow: 10px 10px 20px 1px lightgrey;
+
+    margin-left: 50%;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+}
+  
+h2, p {
+    margin-bottom: 3vw;
+}
+
+form .form-floating:focus-within {
+    z-index: 2;
+}
+
+form input {
+    border-radius: 5px;
+}
+  
+form input[type="password"] {
+    margin-bottom: 10px;
+}
+
+button {
+    width: 100%;
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+}

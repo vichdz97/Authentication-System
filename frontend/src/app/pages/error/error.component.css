@@ -1,0 +1,11 @@
+.container {
+    margin-left: 50%;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%) translateX(-50%);
+}
+
+#sadface {
+    font-size: 5vw;
+}

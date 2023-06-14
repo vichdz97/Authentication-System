@@ -1,0 +1,110 @@
+<app-navbar [user]="currentUser"></app-navbar>
+
+<div class="container text-center">
+    <h2>Welcome Administrator!</h2>
+    <button type="button" class="btn btn-secondary" (click)="displayTable()">{{ btnText }}</button>
+    <button type="button" class="btn btn-primary" (click)="displayUserForm()">Add User</button>
+
+    <ng-container *ngIf="showUserForm">
+        <form [formGroup]="userForm" (ngSubmit)="addUser()">
+            <label for="uname" class="form-label">Username</label>
+            <input id="uname" type="text" formControlName="username" class="form-control" placeholder="Username" required>
+
+            <label for="pwd" class="form-label">Password</label>
+            <input id="pwd" type="text" formControlName="password" class="form-control" placeholder="Password" required>
+
+            <label for="roles" class="form-label">Assign Role</label>
+            <select id="roles" formControlName="role" class="form-control" required>
+                <option value="">Select a Role:</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Manager">Manager</option>
+                <option value="User">User</option>
+            </select>
+
+            <button type="submit" class="btn btn-success" [disabled]="!userForm.valid">Submit</button>
+        </form>
+    </ng-container>
+
+    <ng-container *ngIf="btnText != 'Show Users'">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let u of allUsers">
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.password }}</td>
+                    <td>{{ u.role }}</td>
+                    <button id="action" type="button" class="btn btn-sm btn-outline-danger" (click)="openModal(u.id)" [disabled]="showUpdateForm"><i class="bi bi-trash-fill"></i></button>
+                    <button id="action" type="button" class="btn btn-sm btn-outline-warning" (click)="displayUpdateForm(u)" [disabled]="showUpdateForm"><i class="bi bi-pencil-square"></i></button>
+                </tr>
+                <tr *ngIf="showUpdateForm">
+                    <td>Update User {{ user?.id }}</td>
+                    <td>
+                        <input type="text" [(ngModel)]="updateName" class="form-control" placeholder="Username" required>
+                    </td>
+                    <td>
+                        <input type="text" [(ngModel)]="updatePwd" class="form-control" placeholder="Password" required
+                        [ngbPopover]="requirements" popoverTitle="Requirements" placement="bottom" container="body">
+                    </td>
+                    <td>
+                        <select class="form-control" [(ngModel)]="updateRole" required>
+                            <option value="">Select a Role:</option>
+                            <option value="Administrator">Administrator</option>
+                            <option value="Manager">Manager</option>
+                            <option value="User">User</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button id="action" type="button" class="btn btn-success" (click)="updateUser()" [disabled]="!matchAll(updatePwd) && updatePwd !== ''">Update</button>
+                        <button id="action" type="button" class="btn btn-outline-danger" (click)="showUpdateForm = !showUpdateForm">Cancel</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </ng-container>
+
+    <ng-template #requirements>
+        <ng-container *ngIf="updatePwd.length >= 6; else tooShort">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req1 }}</p>
+        </ng-container>
+        <ng-template #tooShort>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req1 }}</p>
+        </ng-template>
+
+        <ng-container *ngIf="matchUpper(updatePwd); else noUpper">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req2 }}</p>
+        </ng-container>
+        <ng-template #noUpper>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req2 }}</p>
+        </ng-template>
+        
+        <ng-container *ngIf="matchLower(updatePwd); else noLower">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req3 }}</p>
+        </ng-container>
+        <ng-template #noLower>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req3 }}</p>
+        </ng-template>
+        
+        <ng-container *ngIf="matchNum(updatePwd); else noNum">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req4 }}</p>
+        </ng-container>
+        <ng-template #noNum>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req4 }}</p>
+        </ng-template>
+
+        <ng-container *ngIf="matchSpecial(updatePwd); else noSpecial">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req5 }}</p>
+        </ng-container>
+        <ng-template #noSpecial>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req5 }}</p>
+        </ng-template>
+    </ng-template>
+</div>

@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <h1 class="navbar-brand mb-0 mx-3">Authentication System</h1>
+
+        <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
+            &#9776;
+        </button>
+
+        <div *ngIf="user != undefined; else login" [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
+                <li></li>
+            </ul>
+  
+            <span class="navbar-text">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link disabled">
+                            Hi {{ user.username }}!
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" role="button" (click)="confirmLogout()"> 
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </span>
+        </div>
+
+        <ng-template #login>
+            <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
+                    <li></li>
+                </ul>
+      
+                <span class="navbar-text">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link disabled">
+                                Hi Guest!
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" role="button" [routerLink]="['/signup']"> 
+                                Sign Up
+                            </a>
+                        </li>
+                    </ul>
+                </span>
+            </div>
+        </ng-template>
+    </div>
+</nav>

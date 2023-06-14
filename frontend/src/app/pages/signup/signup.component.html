@@ -1,0 +1,116 @@
+<form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="text-center">
+    <a id="home" class="nav-link" role="button" [routerLink]="['/home']">&larr; <i class="bi bi-house-door-fill"></i></a>
+    <h2 class="text-center">Authentication System<br>Sign Up</h2>
+
+    <ng-container *ngIf="successMessage === ''; else login">
+        <p class="text-danger">{{ alertMessage }}</p>
+        
+        <div class="row">
+            <div class="col">
+                <label for="uname" class="form-label">Username</label>
+            </div>
+            <div class="col">
+                <input id="uname" type="text" formControlName="username" class="form-control" placeholder="Username">
+                <app-inline-error [control]="usernameControl"></app-inline-error>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="password" class="form-label">Password</label>
+            </div>
+            <div class="col">
+                <ng-template #requirements>
+                    <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
+                        <p class="text-success req"><i class="bi bi-check2"></i> {{ req1 }}</p>
+                    </ng-container>
+                    <ng-template #tooShort>
+                        <p class="text-danger req"><i class="bi bi-x"></i> {{ req1 }}</p>
+                    </ng-template>
+
+                    <ng-container *ngIf="matchUpper(passwordControl.value); else noUpper">
+                        <p class="text-success req"><i class="bi bi-check2"></i> {{ req2 }}</p>
+                    </ng-container>
+                    <ng-template #noUpper>
+                        <p class="text-danger req"><i class="bi bi-x"></i> {{ req2 }}</p>
+                    </ng-template>
+                    
+                    <ng-container *ngIf="matchLower(passwordControl.value); else noLower">
+                        <p class="text-success req"><i class="bi bi-check2"></i> {{ req3 }}</p>
+                    </ng-container>
+                    <ng-template #noLower>
+                        <p class="text-danger req"><i class="bi bi-x"></i> {{ req3 }}</p>
+                    </ng-template>
+                    
+                    <ng-container *ngIf="matchNum(passwordControl.value); else noNum">
+                        <p class="text-success req"><i class="bi bi-check2"></i> {{ req4 }}</p>
+                    </ng-container>
+                    <ng-template #noNum>
+                        <p class="text-danger req"><i class="bi bi-x"></i> {{ req4 }}</p>
+                    </ng-template>
+
+                    <ng-container *ngIf="matchSpecial(passwordControl.value); else noSpecial">
+                        <p class="text-success req"><i class="bi bi-check2"></i> {{ req5 }}</p>
+                    </ng-container>
+                    <ng-template #noSpecial>
+                        <p class="text-danger req"><i class="bi bi-x"></i> {{ req5 }}</p>
+                    </ng-template>
+                </ng-template>
+
+                <ng-container *ngIf="matchAll(passwordControl.value)">
+                    <i class="bi bi-check2 text-success checkmark"></i>
+                </ng-container>
+
+                <div class="input-group">
+                    <input id="password" [type]="hidden ? 'password' : 'text'" formControlName="password" class="form-control" placeholder="Password" 
+                    [ngbPopover]="requirements" popoverTitle="Requirements" placement="right" container="body">
+                    <div class="input-group-append">
+                        <div class="input-group-text" (click)="showPassword()">
+                            <ng-container *ngIf="hidden; else show">
+                                <i class="bi bi-eye-slash-fill"></i>
+                            </ng-container>
+                            <ng-template #show>
+                                <i class="bi bi-eye-fill"></i>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+
+                <app-inline-error [control]="passwordControl"></app-inline-error>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <label for="confirm" class="form-label">Confirm Password</label>
+            </div>
+            <div class="col">
+                <ng-container *ngIf="passwordsMatch()">
+                    <i class="bi bi-check2 text-success checkmark"></i>
+                </ng-container>
+
+                <div class="input-group">
+                    <input id="confirm" [type]="hidden2 ? 'password' : 'text'" formControlName="confirm" class="form-control" placeholder="Confirm Password">
+                    <div class="input-group-append">
+                        <div class="input-group-text" (click)="showPassword2()">
+                            <ng-container *ngIf="hidden2; else show2">
+                                <i class="bi bi-eye-slash-fill"></i>
+                            </ng-container>
+                            <ng-template #show2>
+                                <i class="bi bi-eye-fill"></i>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                
+                <app-inline-error [control]="confirmControl"></app-inline-error>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="!signUpForm.valid || !matchAll(passwordControl.value) || !passwordsMatch()">Create Account</button>
+    </ng-container>
+
+    <ng-template #login>
+        <p class="text-success">{{ successMessage }}</p>
+        <button type="button" class="btn btn-primary" [routerLink]="['/login']">Login</button>
+    </ng-template>
+</form>
