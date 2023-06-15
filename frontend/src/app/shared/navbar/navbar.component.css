@@ -1,0 +1,9 @@
+img {
+    width: 32px;
+}
+
+@media screen and (min-width: 960px) {
+    img {
+        width: 48px;
+    }
+}
