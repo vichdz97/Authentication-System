@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
 
   users!: User[];
   userID: number = 0;
-  alertMessage: string = '';
+  invalidMsg: string = '';
 
   loginForm = this.fb.group({
     username: ['', [Validators.required]],
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
         this.redirectUser();
       }
       else {
-        this.alertMessage = 'Invalid login attempt.';
+        this.invalidMsg = 'Invalid login attempt.';
         this.loginForm.reset();
       }
     }

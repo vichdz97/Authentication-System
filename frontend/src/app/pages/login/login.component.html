@@ -1,23 +1,26 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-center">
-    
-    <a id="home" class="nav-link" role="button" [routerLink]="['/home']">&larr; <i class="bi bi-house-door-fill"></i></a>
-    <h2 class="text-center">Authentication System<br>Login</h2>
+<app-navbar></app-navbar>
+<div class="h-100 d-flex justify-content-center align-items-center text-center">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <h1 class="mb-2">Sign in</h1>
+        <p class="text-danger">{{ invalidMsg }}</p>
+        <div class="form-floating mt-3">
+            <input type="text" id="uname" class="form-control" formControlName="username" placeholder="username"
+                [ngStyle]="usernameControl.invalid && (usernameControl.dirty || usernameControl.touched) ? {'border-color':'#dc3545'} : {}">
+            <label for="uname" class="form-label">Username</label>
+            <app-inline-error [control]="usernameControl"></app-inline-error>
+        </div>
+        <div class="form-floating my-4">
+            <input type="password" id="password" class="form-control" formControlName="password" placeholder="password"
+                [ngStyle]="passwordControl.invalid && (passwordControl.dirty || passwordControl.touched) ? {'border-color':'#dc3545'} : {}">
+            <label for="password" class="form-label">Password</label>
+            <app-inline-error [control]="passwordControl"></app-inline-error>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">Sign in</button>
+        <div class="mx-5">
+            <a class="nav-link" role="button" [routerLink]="['/signup']">Don't have an account? Sign up!</a>
+            <p class="text-muted m-1">&#8212;&nbsp;&nbsp;or&nbsp;&nbsp;&#8212;</p>
+            <a class="nav-link" role="button" [routerLink]="['/guest']">Continue as Guest</a>
+        </div>
+    </form>
+</div>
 
-    <p class="text-danger">{{ alertMessage }}</p>
-
-    <div class="form-floating">
-        <input id="uname" type="text" formControlName="username" class="form-control" placeholder="username">
-        <label for="uname" class="form-label">Username</label>
-        <app-inline-error [control]="usernameControl"></app-inline-error>
-    </div>
-
-    <div class="form-floating">
-        <input id="password" type="password" formControlName="password" class="form-control" placeholder="password">
-        <label for="password" class="form-label">Password</label>
-        <app-inline-error [control]="passwordControl"></app-inline-error>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Sign in</button>
-    <a class="nav-link" role="button" [routerLink]="['/signup']">Don't have an account? Sign up!</a>
-    <a class="nav-link" role="button" [routerLink]="['/guest']">Continue as Guest</a>
-</form>
