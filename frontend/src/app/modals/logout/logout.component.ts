@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -7,18 +7,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './logout.component.html',
   styleUrls: ['./logout.component.css']
 })
-export class LogoutComponent implements OnInit {
+export class LogoutComponent {
 
   constructor(
     public activeModal: NgbActiveModal,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-  }
-
   logout() {
     this.activeModal.close();
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/login');
   }
 }
