@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@CrossOrigin(origins = "http://authentication-system.s3-website.us-east-2.amazonaws.com")
+@CrossOrigin(origins = {"http://localhost:4200", "http://authentication-system.s3-website.us-east-2.amazonaws.com"})
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
