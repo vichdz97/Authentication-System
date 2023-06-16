@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
-<div class="h-100 d-flex justify-content-center align-items-center text-center">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<div class="h-75 d-flex justify-content-center align-items-center text-center">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="mt-5">
         <h1 class="mb-2">Sign in</h1>
         <p class="text-danger">{{ invalidMsg }}</p>
         <div class="form-floating mt-3">
