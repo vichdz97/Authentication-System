@@ -17,20 +17,25 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link disabled">
-                            {{ user ? "Hi " + user.username + "!" : "Hi Guest!" }}
+                            {{ user ? "Hi " + user.username + "!" : "" }}
                         </a>
                     </li>
                     <li>
                         <a class="nav-link" role="button" (click)="openFAQ()">FAQ</a>
                     </li>
-                    <li>
-                        <ng-container *ngIf="user; else signup">
+                    <ng-container *ngIf="user; else signup">
+                        <li>
                             <a class="nav-link" role="button" (click)="confirmLogout()">Logout</a> 
-                        </ng-container>
-                        <ng-template #signup>
-                            <a class="nav-link" role="button" [routerLink]="['/signup']"> Sign Up</a>
-                        </ng-template>
-                    </li>
+                        </li>
+                    </ng-container>
+                    <ng-template #signup>
+                        <li>
+                            <a class="nav-link" role="button" routerLink="/login"> Sign In</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" role="button" routerLink="/signup"> Sign Up</a>
+                        </li>
+                    </ng-template>
                 </ul>
             </span>
         </div>
