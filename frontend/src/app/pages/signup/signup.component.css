@@ -1,49 +1,31 @@
-.home {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-}
-  
-form {
-    width: auto;
-    padding: 4vw 6vw;
-
-    border-radius: 25px;
-    box-shadow: 10px 10px 20px 1px lightgrey;
-
-    margin-left: 50%;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%) translateX(-50%);
-    transform: translateY(-50%) translateX(-50%);
-}
-  
-h2, p {
-    margin-bottom: 3vw;
+#uname {
+    width: 80vw;
 }
 
-input {
-    border-radius: 5px;
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-label {
-    margin-top: 5px;
-}
-
-button {
-    width: 100%;
-    margin-top: 1vw;
-    margin-bottom: 1vw;
-}
-
-.req {
-    margin: 0;
+.eyeBtn {
+    width: 3.6em;
+    height: 3.6em;
+    background-color: rgb(230, 230, 230);
 }
 
 .checkmark {
     position: absolute;
-    right: 2.5vw;
-    font-size: x-large;
+    right: 2.5em;
+    font-size: 1.5em;
+}
+
+@media screen and (min-width: 760px) {
+    #uname {
+        width: 350px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    #uname {
+        width: 350px;
+    }
+
+    .checkmark {
+        right: 2.5em;
+    }
 }

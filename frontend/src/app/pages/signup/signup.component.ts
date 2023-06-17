@@ -20,11 +20,11 @@ export class SignupComponent implements OnInit {
     confirm: ['', [Validators.required]]
   });
 
-  req1: string = "At least 6 characters in length"
-  req2: string = "At least 1 uppercase letter (A-Z)";
-  req3: string = "At least 1 lowercase letter (a-z)";
-  req4: string = "At least 1 number (0-9)";
-  req5: string = "At least 1 valid special character (@$!%*#?&)";
+  req1: string = "At least 6 characters"
+  req2: string = "At least 1 uppercase letter";
+  req3: string = "At least 1 lowercase letter";
+  req4: string = "At least 1 number";
+  req5: string = "At least 1 special character";
 
   hidden: boolean = true;
   hidden2: boolean = true;
@@ -67,49 +67,44 @@ export class SignupComponent implements OnInit {
   }
 
   matchSpecial(str: string) {
-    return str.match(/^.*[@$!%*#?&].*$/);
+    return str.match(/^.*[~`!@#$%^&*(){}[\]+=|\\/?<>,.:;"'_-].*$/);
   }
 
   matchAll(str: string) {
-    return str.match(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*#?&])[A-Za-z0-9@$!%*#?&]{6,}$/);
+    return this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
   }
 
   passwordsMatch() {
-    return this.passwordControl.value === this.confirmControl.value && this.passwordControl.value !== '';
+    return this.passwordControl.value !== '' && this.passwordControl.value === this.confirmControl.value;
   }
 
-  showPassword() {
+  togglePassword() {
     this.hidden = !this.hidden;
   }
 
-  showPassword2() {
+  togglePassword2() {
     this.hidden2 = !this.hidden2;
   }
 
   onSubmit() {
-    if (this.signUpForm.valid) {
-      let uname: string = this.usernameControl.value;
-      let pwd: string = this.passwordControl.value;
+    let uname: string = this.usernameControl.value;
+    let pwd: string = this.passwordControl.value;
 
-      if (!this.accountExists(uname, pwd)) {
-        this.createAccount(uname, pwd);
-      }
-      else {
-        this.alertMessage = "Sorry! This account already exists."
-        this.signUpForm.reset();
-        this.signUpForm.get('password')?.setValue('');
-      }
+    if (this.accountExists(uname, pwd)) {
+      this.successMessage = "";
+      this.alertMessage = "Sorry! This account already exists."
     }
     else {
-      console.warn("Fill out all missing fields");
-      this.signUpForm.markAllAsTouched();
+      this.alertMessage = "";
+      this.createAccount(uname, pwd);
     }
+    this.signUpForm.reset();
+    this.signUpForm.get('password')?.setValue('');
   }
 
   accountExists(uname: string, pwd: string) {
     for (let i = 0; i < this.users.length; i++) {
       if (uname === this.users[i].username && pwd === this.users[i].password) {
-        this.alertMessage = "";
         return true;
       }
     }
@@ -125,11 +120,10 @@ export class SignupComponent implements OnInit {
 
     this.userService.createUser(newUser).subscribe(
       res => {
-        this.successMessage = 'Account successfully created! Please proceed to the login page.';
+        this.successMessage = "Account successfully created!";
       },
       err => console.error("ERROR - Could not create account"),
       () => console.log("SUCCESS - Account created")
     );
   }
-
 }
