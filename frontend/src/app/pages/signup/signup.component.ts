@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
+import { LoadingComponent } from 'src/app/modals/loading/loading.component';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -31,7 +33,8 @@ export class SignupComponent implements OnInit {
   
   constructor(
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private modalService: NgbModal
     ) { }
 
   ngOnInit(): void {
@@ -97,6 +100,7 @@ export class SignupComponent implements OnInit {
     else {
       this.alertMessage = "";
       this.createAccount(uname, pwd);
+      this.modalService.open(LoadingComponent);
     }
     this.signUpForm.reset();
     this.signUpForm.get('password')?.setValue('');
@@ -121,6 +125,7 @@ export class SignupComponent implements OnInit {
     this.userService.createUser(newUser).subscribe(
       res => {
         this.successMessage = "Account successfully created!";
+        this.ngOnInit();
       },
       err => console.error("ERROR - Could not create account"),
       () => console.log("SUCCESS - Account created")
