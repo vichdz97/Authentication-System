@@ -2,3 +2,19 @@ a, p {
     margin: 0;
     padding: 0;
 }
+
+.form-control {
+    width: 80vw;
+}
+
+@media screen and (min-width: 760px) {
+    .form-control {
+        width: 350px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    .form-control {
+        width: 350px;
+    }
+}
