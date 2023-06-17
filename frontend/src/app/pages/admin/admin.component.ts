@@ -104,7 +104,7 @@ export class AdminComponent implements OnInit {
   deleteUser(id: number) {
     if (id === this.currentUser?.id) {
       this.userService.deleteUser(id).subscribe(
-        res => this.router.navigateByUrl('/home'),
+        res => this.router.navigateByUrl('/login'),
         err => console.error("ERROR - Could not delete user"),
         () => console.log("SUCCESS - User deleted")
       );
