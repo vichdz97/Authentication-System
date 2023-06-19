@@ -21,27 +21,27 @@ export class LoadingComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.userService.getAllUsers().subscribe(
-            data => this.users = data,
-            err => console.error("ERROR - Could not retrieve users"),
-            () => {
+        this.userService.getAllUsers().subscribe({
+            next: data => this.users = data,
+            error: err => console.error("ERROR - Could not retrieve users"),
+            complete: () => {
                 this.usersLoaded = true;
                 console.log("SUCCESS - Users retrieved");
             }
-        );
+        });
     }
 
     redirect() {
         setTimeout(() => { 
             let userID = this.users[this.users.length - 1].id;
-            this.userService.getUser(userID).subscribe(
-                res =>  {
+            this.userService.getUser(userID).subscribe({
+                next: res =>  {
                     this.activeModal.close();
                     this.router.navigateByUrl('/user');
                 },
-                err => console.error("ERROR - User does not exist"),
-                () => console.log(`SUCCESS - User #${userID} retrieved`)
-            )  
+                error: err => console.error("ERROR - User does not exist"),
+                complete: () => console.log(`SUCCESS - User #${userID} retrieved`)
+            })  
         }, 1500);
     }
 
