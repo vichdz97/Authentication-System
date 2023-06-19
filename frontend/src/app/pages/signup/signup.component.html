@@ -7,10 +7,11 @@
        
         <div class="form-floating mt-3">
             <input type="text" id="uname" class="form-control" formControlName="username" placeholder="Username"
-                [ngStyle]="usernameControl.invalid && (usernameControl.dirty || usernameControl.touched) ? {'border-color':'#dc3545'} : {}">
+                [ngStyle]="hasErrors(usernameControl) ? {'border-color':'#dc3545'} : (usernameControl.valid ? {'border-color': '#198754'} : {})">
             <label for="uname" class="form-label">Username</label>
-            <app-inline-error [control]="usernameControl"></app-inline-error>
+            <i id="unameCheckmark" [ngClass]="usernameControl.valid ? 'bi-check2 text-success checkmark' : ''"></i>
         </div>
+        <app-inline-error [control]="usernameControl"></app-inline-error>
         
         <ng-template #requirements>
             <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
@@ -48,7 +49,7 @@
         <div class="my-4">
             <div class="form-floating d-flex align-items-center">
                 <input [type]="hidden ? 'password' : 'text'" id="pwd" class="form-control" formControlName="password" placeholder="Password"
-                    [ngStyle]="passwordControl.invalid && (passwordControl.dirty || passwordControl.touched) ? {'border-color':'#dc3545'} : {}"
+                    [ngStyle]="hasErrors(passwordControl) ? {'border-color':'#dc3545'} : (matchAll(passwordControl.value) ? {'border-color':'#198754'} : {})"
                     [ngbPopover]="requirements" popoverTitle="Requirements" placement="right top" container="body">
                 <label for="pwd" class="form-label">Password</label>
                 <button type="button" class="btn eyeBtn" (click)="togglePassword()"><i [ngClass]="hidden ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i></button>
@@ -60,7 +61,7 @@
         <div class="mb-4">
             <div class="form-floating d-flex align-items-center">
                 <input [type]="hidden2 ? 'password' : 'text'" id="confirmPwd" class="form-control" formControlName="confirm" placeholder="Confirm Password"
-                    [ngStyle]="confirmControl.invalid && (confirmControl.dirty || confirmControl.touched) ? {'border-color':'#dc3545'} : {}">
+                    [ngStyle]="hasErrors(confirmControl) ? {'border-color':'#dc3545'} : (passwordsMatch() ? {'border-color':'#198754'} : {})">
                 <label for="confirmPwd" class="form-label">Confirm Password</label>
                 <button type="button" class="btn eyeBtn" (click)="togglePassword2()"><i [ngClass]="hidden2 ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i></button>
                 <i [ngClass]="passwordsMatch() ? 'bi-check2 text-success checkmark' : ''"></i>
