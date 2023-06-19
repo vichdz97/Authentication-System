@@ -89,6 +89,10 @@ export class SignupComponent implements OnInit {
     this.hidden2 = !this.hidden2;
   }
 
+  hasErrors(control: FormControl) {
+    return control.invalid && (control.dirty || control.touched);
+  }
+
   onSubmit() {
     let uname: string = this.usernameControl.value;
     let pwd: string = this.passwordControl.value;
@@ -100,19 +104,21 @@ export class SignupComponent implements OnInit {
     else {
       this.alertMessage = "";
       this.createAccount(uname, pwd);
-      this.modalService.open(LoadingComponent);
+      this.modalService.open(LoadingComponent, { centered: true });
+
     }
     this.signUpForm.reset();
     this.signUpForm.get('password')?.setValue('');
   }
 
   accountExists(uname: string, pwd: string) {
-    for (let i = 0; i < this.users.length; i++) {
-      if (uname === this.users[i].username && pwd === this.users[i].password) {
-        return true;
+    let exists = false;
+    this.users.forEach(user => {
+      if (uname === user.username && pwd === user.password) {
+        exists = true;
       }
-    }
-    return false;
+    });
+    return exists;
   }
 
   createAccount(uname: string, pwd: string) {
