@@ -8,6 +8,11 @@
     background-color: rgb(230, 230, 230);
 }
 
+#unameCheckmark {
+    top: 0.5em;
+    right: 0.5em;
+}
+
 .checkmark {
     position: absolute;
     right: 2.5em;
@@ -23,9 +28,5 @@
 @media screen and (min-width: 960px) {
     #uname {
         width: 350px;
-    }
-
-    .checkmark {
-        right: 2.5em;
     }
 }
