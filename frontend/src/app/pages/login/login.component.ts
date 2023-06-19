@@ -62,13 +62,14 @@ export class LoginComponent implements OnInit {
   }
 
   accountExists(uname: string, pwd: string) {
-    for (let i = 0; i < this.users.length; i++) {
-      if (uname === this.users[i].username && pwd === this.users[i].password) {
-        this.userID = this.users[i].id;
-        return true;
+    let exists = false;
+    this.users.forEach(user => {
+      if (uname === user.username && pwd === user.password) {
+        this.userID = user.id;
+        exists = true;
       }
-    }
-    return false;
+    });
+    return exists;
   }
 
   redirectUser() {
