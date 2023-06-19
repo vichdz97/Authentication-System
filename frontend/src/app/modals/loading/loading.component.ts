@@ -36,13 +36,13 @@ export class LoadingComponent implements OnInit {
             let userID = this.users[this.users.length - 1].id;
             this.userService.getUser(userID).subscribe(
                 res =>  {
-                    this.router.navigateByUrl('/user');
                     this.activeModal.close();
+                    this.router.navigateByUrl('/user');
                 },
                 err => console.error("ERROR - User does not exist"),
-                () => console.log("SUCCESS - User retrieved")
+                () => console.log(`SUCCESS - User #${userID} retrieved`)
             )  
-        }, 1000);
+        }, 1500);
     }
 
 }
