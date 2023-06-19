@@ -15,7 +15,6 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { ManagerComponent } from './pages/manager/manager.component';
 import { UserComponent } from './pages/user/user.component';
-import { GuestComponent } from './pages/guest/guest.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { InlineErrorComponent } from './shared/inline-error/inline-error.component';
@@ -33,7 +32,6 @@ import { LoadingComponent } from './modals/loading/loading.component';
     NavbarComponent,
     ManagerComponent,
     UserComponent,
-    GuestComponent,
     SignupComponent,
     ErrorComponent,
     InlineErrorComponent,
