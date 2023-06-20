@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { DeleteComponent } from 'src/app/modals/delete/delete.component';
+import { UpdateComponent } from 'src/app/modals/update/update.component';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -13,28 +14,23 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class AdminComponent implements OnInit {
 
-    btnText: string = "Show Users";
-    showUserForm: boolean = false;
-    showUpdateForm: boolean = false;
-    allUsers?: User[];
+    allUsers!: User[];
     currentUser?: User;
-  
+
+    showUserForm: boolean = false;  
+    errorMessage: string = '';
+    successMessage: string = '';
     userForm = this.fb.group({
         username: ['', [Validators.required]],
         password: ['', [Validators.required]],
         role: ['', [Validators.required]],
     });
   
+    showUpdateForm: boolean = false;
     user?: User;
     updateName?: string;
     updatePwd!: string;
     updateRole?: string;
-
-    req1: string = "At least 6 characters"
-    req2: string = "At least 1 uppercase letter";
-    req3: string = "At least 1 lowercase letter";
-    req4: string = "At least 1 number";
-    req5: string = "At least 1 special character";
 
     constructor(
         private fb: FormBuilder,
@@ -64,30 +60,32 @@ export class AdminComponent implements OnInit {
         return this.userForm.get('role') as FormControl;
     }
 
-    openModal(id: number) {
-        const modalRef = this.modalService.open(DeleteComponent);
-        modalRef.componentInstance.userID = id;
-        modalRef.closed.subscribe((canDelete: boolean) => {
-            if (canDelete) {
-                this.deleteUser(id);
-            }
-        });
+    displayUserForm() {
+        this.showUserForm = !this.showUserForm;
+        this.errorMessage = '';
+        this.userForm.reset();
     }
 
     addUser() {
-        if (this.userForm.valid) {
-            let uname: string = this.usernameControl.value;
-            let pwd: string = this.passwordControl.value;
-            let userRole: string = this.roleControl.value;
+        let uname: string = this.usernameControl.value;
+        let pwd: string = this.passwordControl.value;
+        let userRole: string = this.roleControl.value;
 
+        if (this.accountExists(uname, pwd)) {
+            this.errorMessage = "This username and password already exists!";
+            this.successMessage = '';
+            this.userForm.reset();
+        }
+        else {
             let newUser: User = <User> {
                 username: uname,
                 password: pwd,
                 role: userRole
             };
-
+    
             this.userService.createUser(newUser).subscribe({
                 next: res => {
+                    this.successMessage = "User successfully added!";
                     this.displayUserForm();
                     this.ngOnInit();
                 },
@@ -95,10 +93,25 @@ export class AdminComponent implements OnInit {
                 complete: () => console.log("SUCCESS - New user created")
             });
         }
-        else {
-            console.warn("Fill out all missing fields");
-            this.userForm.markAllAsTouched();
-        }
+    }
+
+    accountExists(uname: string, pwd: string) {
+        let exists = false;
+        this.allUsers.forEach(user => {
+            if (uname === user.username && pwd === user.password) {
+                exists = true;
+            }
+        });
+        return exists;
+    }
+
+    openDeleteModal(id: number) {
+        const modalRef = this.modalService.open(DeleteComponent);
+        modalRef.componentInstance.userID = id;
+        modalRef.closed.subscribe((canDelete: boolean) => {
+            if (canDelete)
+                this.deleteUser(id);
+        });
     }
 
     deleteUser(id: number) {
@@ -118,14 +131,16 @@ export class AdminComponent implements OnInit {
         }
     }
 
-    updateUser() {
-        let updatedUser: User = <User> {
-            ...this.user,
-            username: this.updateName != '' ? this.updateName : this.user?.username,
-            password: this.updatePwd != '' ? this.updatePwd : this.user?.password,
-            role: this.updateRole != '' ? this.updateRole : this.user?.role
-        };
+    openUpdateModal(id: number) {
+        const modalRef = this.modalService.open(UpdateComponent, { centered: true });
+        modalRef.componentInstance.userID = id;
+        modalRef.closed.subscribe((updatedUser: User) => { 
+            if (updatedUser.id)
+                this.updateUser(updatedUser);
+        });
+    }
 
+    updateUser(updatedUser: User) {
         if (updatedUser.id === this.currentUser?.id) {
             this.userService.updateCurrentUser(updatedUser).subscribe({
                 next: res => {
@@ -147,42 +162,5 @@ export class AdminComponent implements OnInit {
             });
         }
     }
-
-    displayUserForm() {
-        this.showUserForm = !this.showUserForm;
-        this.userForm.reset();
-    }   
-
-    displayUpdateForm(user: User) {
-        this.showUpdateForm = !this.showUpdateForm;
-        this.user = user;
-        this.updateName = '';
-        this.updatePwd = '';
-        this.updateRole = '';
-    }
-
-    displayTable() {
-        this.btnText = this.btnText === "Show Users" ? this.btnText = "Hide Users" : this.btnText = "Show Users";
-    }
-
-    matchUpper(str: string) {
-        return str.match(/^.*[A-Z].*$/);
-    }
-
-    matchLower(str: string) {
-        return str.match(/^.*[a-z].*$/);
-    }
     
-    matchNum(str: string) {
-        return str.match(/^.*[0-9].*$/);
-    }
-
-    matchSpecial(str: string) {
-        return str.match(/^.*[~`!@#$%^&*(){}[\]+=|\\/?<>,.:;"'_-].*$/);
-    }
-
-    matchAll(str: string) {
-        return this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
-    }
-
 }
