@@ -19,7 +19,7 @@ export class DeleteComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.userService.getUserToDelete(this.userID).subscribe({
+        this.userService.getUserToModify(this.userID).subscribe({
             next: user => {
                 this.name = user.username;
                 this.role = user.role;
