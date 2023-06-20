@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <h5 class="text-warning">Update user information</h5>
+    <button type="button" class="btn" aria-label="Close" (click)="activeModal.dismiss('Cross click')">&times;</button>
+</div>
+<div class="modal-body">
+    <label for="uname" class="form-label mt-2 mb-1">Username</label>
+    <input type="text" [(ngModel)]="updatedName" id="uname" class="form-control" placeholder="{{ user?.username }}">
+
+    <label for="pwd" class="form-label mt-2 mb-1">Password</label>
+    <input type="text" [(ngModel)]="updatedPassword" id="pwd" class="form-control" placeholder="{{ user?.password }}">
+
+    <label for="role" class="form-label mt-2 mb-1">Select a Role:</label>
+    <select name="selectRoles" [(ngModel)]="updatedRole" id="role" class="form-control">
+        <option value="" disabled selected>Previous Role: {{ user?.role }}</option>
+        <option value="Administrator">Administrator</option>
+        <option value="Manager">Manager</option>
+        <option value="User">User</option>
+    </select>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('No click')">Cancel</button>
+    <button type="button" class="btn btn-warning" (click)="updateUser()" ngbAutofocus>Update</button>
+</div>
