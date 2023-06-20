@@ -36,7 +36,7 @@ export class UserService {
             );
     }
 
-    getUserToDelete(id: number): Observable<User> {
+    getUserToModify(id: number): Observable<User> {
         return this.http.get<User>(`${this.url}/${id}`);
     }
 
