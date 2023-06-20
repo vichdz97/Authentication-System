@@ -27,10 +27,10 @@ export class AdminComponent implements OnInit {
     });
   
     showUpdateForm: boolean = false;
-    user?: User;
-    updateName?: string;
-    updatePwd!: string;
-    updateRole?: string;
+
+    showSearch: boolean = false;
+    searchText!: string;
+    filteredUsers: any;
 
     constructor(
         private fb: FormBuilder,
@@ -63,7 +63,19 @@ export class AdminComponent implements OnInit {
     displayUserForm() {
         this.showUserForm = !this.showUserForm;
         this.errorMessage = '';
+        this.searchText = '';
         this.userForm.reset();
+        if (this.showSearch == true)
+            this.showSearch = false;
+    }
+
+    displaySearch() {
+        this.showSearch = !this.showSearch;
+        this.searchText = '';
+        this.errorMessage = '';
+        this.successMessage = '';
+        if (this.showUserForm == true)
+            this.showUserForm = false;
     }
 
     addUser() {
@@ -95,7 +107,7 @@ export class AdminComponent implements OnInit {
         }
     }
 
-    accountExists(uname: string, pwd: string) {
+    accountExists(uname: string, pwd: string): boolean {
         let exists = false;
         this.allUsers.forEach(user => {
             if (uname === user.username && pwd === user.password) {
@@ -162,5 +174,21 @@ export class AdminComponent implements OnInit {
             });
         }
     }
-    
+
+    searchUser() {
+        this.filteredUsers = this.allUsers.map(user => {
+            let id = user.id.toString();
+            let username = user.username.toLowerCase();
+            let password = user.password.toLowerCase();
+            let role = user.role.toLowerCase();
+            if (id.includes(this.searchText) ||
+                username.includes(this.searchText) || 
+                password.includes(this.searchText) || 
+                role.includes(this.searchText)) {
+                return user;
+            }
+            return; 
+        }).filter(user => user);
+    }
+
 }

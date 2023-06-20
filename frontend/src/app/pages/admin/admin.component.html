@@ -2,7 +2,10 @@
 
 <div class="d-flex flex-column align-items-center">
     <h1 class="text-center mt-4">Welcome Administrator</h1>
-    <button type="button" class="btn btn-primary my-2" (click)="displayUserForm()">Add User</button>
+    <div class="my-2">
+        <button type="button" class="btn btn-primary mx-1" (click)="displayUserForm()">Add User</button>
+        <button type="button" class="btn btn-secondary mx-1" (click)="displaySearch()">Search User</button>
+    </div>
     <p class="text-success text-center mt-2 mb-0" [hidden]="userForm.dirty || userForm.touched">{{ successMessage }}</p>
     
     <form [formGroup]="userForm" (ngSubmit)="addUser()" [hidden]="!showUserForm">
@@ -24,13 +27,19 @@
         <button type="submit" class="btn btn-success w-100 my-3" [disabled]="userForm.invalid">Submit</button>
     </form>
 
+    <div *ngIf="showSearch" class="d-flex mt-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()">
+        <button class="btn btn-secondary"><i class="bi bi-search"></i></button>
+    </div>
 
-    <div class="mt-3">
-        <h5 class="text-center"><em>Authentication System User Data</em></h5>
-        <div *ngFor="let user of allUsers" class="userInfo m-4 p-4 bg-info box shadow">
+    <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>
+    <ng-container *ngIf="filteredUsers && searchText != ''; else default">
+        <div *ngFor="let user of filteredUsers" class="userInfo bg-info m-4 p-4 box shadow">
             <div class="row align-items-center">
-                <div class="col-md-3 col-lg-3 img-container">
-                    <img src="assets/shield.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
+                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'User'" src="assets/shield.png" width="100" height="100" alt="Profile picture" class="box bg-light">
                 </div>
                 <div class="col-md-3 col-lg-3 credentials-container">
                     <p><strong>ID:</strong> {{ user.id }}</p>
@@ -46,5 +55,28 @@
                 </div>
             </div>
         </div>
-    </div>
+    </ng-container>
+    <ng-template #default>
+        <div *ngFor="let user of allUsers" class="userInfo bg-info m-4 p-4 box shadow">
+            <div class="row align-items-center">
+                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
+                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'User'" src="assets/shield.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                </div>
+                <div class="col-md-3 col-lg-3 credentials-container">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Password:</strong> {{ user.password }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3 role-container">
+                    <p><strong>Role:</strong> {{ user.role }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn" (click)="openUpdateModal(user.id)" [disabled]="showUpdateForm">Update</button></div>
+                    <div><button type="button" class="btn btn-danger w-100" (click)="openDeleteModal(user.id)" [disabled]="showUpdateForm">Delete</button></div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
 </div>
