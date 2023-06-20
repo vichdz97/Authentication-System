@@ -23,6 +23,7 @@ import { LogoutComponent } from './modals/logout/logout.component';
 import { DeleteComponent } from './modals/delete/delete.component';
 import { AuthGuard } from './guards/auth.guard';
 import { LoadingComponent } from './modals/loading/loading.component';
+import { UpdateComponent } from './modals/update/update.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { LoadingComponent } from './modals/loading/loading.component';
     HelpComponent,
     LogoutComponent,
     DeleteComponent,
-    LoadingComponent
+    LoadingComponent,
+    UpdateComponent
   ],
   imports: [
     BrowserModule,
