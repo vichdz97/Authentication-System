@@ -181,10 +181,11 @@ export class AdminComponent implements OnInit {
             let username = user.username.toLowerCase();
             let password = user.password.toLowerCase();
             let role = user.role.toLowerCase();
-            if (id.includes(this.searchText) ||
-                username.includes(this.searchText) || 
-                password.includes(this.searchText) || 
-                role.includes(this.searchText)) {
+            let searchText = this.searchText.toLowerCase();
+            if (id.includes(searchText) ||
+                username.includes(searchText) || 
+                password.includes(searchText) || 
+                role.includes(searchText)) {
                 return user;
             }
             return; 
