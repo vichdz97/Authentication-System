@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
@@ -20,6 +20,12 @@ export class UpdateComponent implements OnInit {
         updatedPassword: '',
         updatedRole: '',
     });
+
+    req1: string = "At least 6 characters"
+    req2: string = "At least 1 uppercase letter";
+    req3: string = "At least 1 lowercase letter";
+    req4: string = "At least 1 number";
+    req5: string = "At least 1 special character";
 
     constructor(
         private fb: FormBuilder,
@@ -53,6 +59,10 @@ export class UpdateComponent implements OnInit {
         return this.updateUserForm.get('updatedRole') as FormControl;
     }
 
+    disableUpdateBtn(): boolean {
+        return this.user?.role != 'Administrator' && (!this.updatedPasswordControl.value || !this.matchAll(this.updatedPasswordControl.value)) && !this.updatedNameControl.value && !this.updatedRoleControl.value;
+    }
+
     updateUser() {
         let updatedUser: User = <User> {
             ...this.user,
@@ -61,8 +71,11 @@ export class UpdateComponent implements OnInit {
             role: this.updatedRoleControl.value ? this.updatedRoleControl.value : this.user?.role
         };
 
-        if (this.accountExists(updatedUser.username, updatedUser.password)) {
+        if (this.userWordExists(updatedUser.username, updatedUser.password)) {
             this.errorMessage = "This username and password already exists!";
+            if (this.accountExists(updatedUser.username, updatedUser.password, updatedUser.role)) {
+                this.errorMessage = "This account already exists!";
+            }
             this.updateUserForm.reset();
         }
         else {
@@ -70,7 +83,17 @@ export class UpdateComponent implements OnInit {
         }
     }
 
-    accountExists(uname?: string, pwd?: string) {
+    accountExists(uname?: string, pwd?: string, role?: string): boolean {
+        let exists = false;
+        this.allUsers?.forEach(user => {
+            if (uname === user.username && pwd === user.password && role === user.role) {
+                exists = true;
+            }
+        });
+        return exists;
+    }
+
+    userWordExists(uname?: string, pwd?: string): boolean {
         let exists = false;
         this.allUsers?.forEach(user => {
             if (uname === user.username && pwd === user.password) {
@@ -78,5 +101,25 @@ export class UpdateComponent implements OnInit {
             }
         });
         return exists;
+    }
+
+    matchUpper(str: string) {
+        return RegExp(/^.*[A-Z].*$/).exec(str);
+    }
+
+    matchLower(str: string) {
+        return RegExp(/^.*[a-z].*$/).exec(str);
+    }
+    
+    matchNum(str: string) {
+        return RegExp(/^.*[0-9].*$/).exec(str);
+    }
+
+    matchSpecial(str: string) {
+        return RegExp(/^.*[~`!@#$%^&*(){}[\]+=|\\/?<>,.:;"'_-].*$/).exec(str);
+    }
+
+    matchAll(str: string) {
+        return this.updatedPasswordControl.value?.length >= 6 && this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
     }
 }
