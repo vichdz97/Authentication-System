@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { DeleteComponent } from 'src/app/modals/delete/delete.component';
+import { UpdateComponent } from 'src/app/modals/update/update.component';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -12,20 +13,12 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ManagerComponent implements OnInit {
 
-    btnText: string = "Show All Users";
-    users?: User[];
+    allUsers?: User[];
     currentUser?: User;
 
-    showUpdateForm: boolean = false;
-    user?: User;
-    updateName?: string;
-    updatePwd!: string;
-
-    req1: string = "At least 6 characters"
-    req2: string = "At least 1 uppercase letter";
-    req3: string = "At least 1 lowercase letter";
-    req4: string = "At least 1 number";
-    req5: string = "At least 1 special character";
+    showSearch: boolean = false;
+    searchText: string = '';
+    filteredUsers: any;
 
     constructor(
         private userService: UserService,
@@ -35,14 +28,19 @@ export class ManagerComponent implements OnInit {
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({
-            next: data => this.users = data,
+            next: data => this.allUsers = data,
             error: err => console.error("ERROR - Could not display users"),
             complete:() => console.log("SUCCESS - Users displayed")
         });
         this.currentUser = this.userService.currentUser;
     }
 
-    openModal(id: number) {
+    displaySearch() {
+        this.showSearch = !this.showSearch;
+        this.searchText = '';
+    }
+
+    openDeleteModal(id: number) {
         const modalRef = this.modalService.open(DeleteComponent);
         modalRef.componentInstance.userID = id;
         modalRef.closed.subscribe((userDeleted: boolean) => {
@@ -60,52 +58,40 @@ export class ManagerComponent implements OnInit {
         });
     }
 
-    updateUser() {
-        let updatedUser: User = <User> {
-            ...this.user,
-            username: this.updateName != '' ? this.updateName : this.user?.username,
-            password: this.updatePwd != '' ? this.updatePwd : this.user?.password
-        };
+    openUpdateModal(id: number) {
+        const modalRef = this.modalService.open(UpdateComponent, { centered: true });
+        modalRef.componentInstance.userID = id;
+        modalRef.closed.subscribe((updatedUser: User) => {
+            if (updatedUser.id) {
+                this.updateUser(updatedUser);
+            }
+        });
+    }
 
+    updateUser(updatedUser: User) {
         this.userService.updateCurrentUser(updatedUser).subscribe({
-            next: res => {
-                this.showUpdateForm = false;
-                this.ngOnInit();
-            },
+            next: res => this.ngOnInit(),
             error: err => console.error("ERROR - Could not update user"),
             complete: () => console.log("SUCCESS - User updated")
         });
     }
 
-    displayUpdateForm(user: User) {
-        this.showUpdateForm = !this.showUpdateForm;
-        this.user = user;
-        this.updateName = '';
-        this.updatePwd = '';
-    }
-
-    displayTable() {
-        this.btnText = this.btnText == "Show All Users" ? this.btnText = "Hide All Users" : this.btnText = "Show All Users";
-    }
-
-    matchUpper(str: string) {
-        return str.match(/^.*[A-Z].*$/);
-    }
-
-    matchLower(str: string) {
-        return str.match(/^.*[a-z].*$/);
-    }
-    
-    matchNum(str: string) {
-        return str.match(/^.*[0-9].*$/);
-    }
-
-    matchSpecial(str: string) {
-        return str.match(/^.*[@$!%*#?&].*$/);
-    }
-
-    matchAll(str: string) {
-        return str.match(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[@$!%*#?&])[A-Za-z0-9@$!%*#?&]{6,}$/);
+    searchUser() {
+        this.filteredUsers = this.allUsers?.map(user => {
+            let returnedUser = {};
+            let id = user.id.toString();
+            let username = user.username.toLowerCase();
+            let password = user.password.toLowerCase();
+            let role = user.role.toLowerCase();
+            let searchText = this.searchText.toLowerCase();
+            if (id.includes(searchText) ||
+                username.includes(searchText) ||
+                password.includes(searchText) || 
+                role.includes(searchText)) {
+                    returnedUser = user;
+            }
+            return returnedUser;
+        }).filter(user => user);
     }
 
 }
