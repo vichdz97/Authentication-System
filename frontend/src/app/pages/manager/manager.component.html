@@ -1,84 +1,59 @@
 <app-navbar [user]="currentUser"></app-navbar>
 
-<div class="container text-center">
-    <h2>Welcome Manager!</h2>
-    <button type="button" class="btn btn-secondary" (click)="displayTable()">{{ btnText }}</button>
+<div class="d-flex flex-column align-items-center">
+    <h1 class="text-center mt-4">Welcome Manager</h1>
+    <button type="button" class="btn btn-secondary mx-1" (click)="displaySearch()">Search User</button>
 
-    <ng-container *ngIf="btnText != 'Show All Users' && currentUser !== undefined">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Role</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let u of users">
-                    <td>{{ u.id }}</td>
-                    <td>{{ u.username }}</td>
-                    <td>{{ u.password }}</td>
-                    <td>{{ u.role }}</td>
-                    <td *ngIf="u.id === currentUser.id">
-                        <button id="action" type="button" class="btn btn-sm btn-outline-danger" (click)="openModal(currentUser.id)" [disabled]="showUpdateForm"><i class="bi bi-trash-fill"></i></button>
-                        <button id="action" type="button" class="btn btn-sm btn-outline-warning" (click)="displayUpdateForm(currentUser)" [disabled]="showUpdateForm"><i class="bi bi-pencil-square"></i></button>
-                    </td>
-                </tr>
-                <tr *ngIf="showUpdateForm">
-                    <td>{{ user?.id }}</td>
-                    <td>
-                        <input type="text" [(ngModel)]="updateName" class="form-control" placeholder="Username" required>
-                    </td>
-                    <td>
-                        <input type="text" [(ngModel)]="updatePwd" class="form-control" placeholder="Password" required
-                        [ngbPopover]="requirements" popoverTitle="Requirements" placement="bottom" container="body">
-                    </td>
-                    <td>{{ user?.role }}</td>
-                    <td>
-                        <button id="action" type="button" class="btn btn-success" (click)="updateUser()" [disabled]="!matchAll(updatePwd) && updatePwd !== ''">Update</button>
-                        <button id="action" type="button" class="btn btn-outline-danger" (click)="showUpdateForm = !showUpdateForm">Cancel</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div *ngIf="showSearch" class="d-flex mt-2 mb-3">
+        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()">
+        <button class="btn btn-secondary"><i class="bi bi-search"></i></button>
+    </div>
+
+    <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>
+    <ng-container *ngIf="filteredUsers && searchText != ''; else default">
+        <div *ngFor="let user of filteredUsers" class="userInfo bg-info m-4 p-4 box shadow">
+            <div class="row align-items-center">
+                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
+                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                </div>
+                <div class="col-md-3 col-lg-3 credentials-container">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Password:</strong> {{ user.password }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3 role-container">
+                    <p><strong>Role:</strong> {{ user.role }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn" (click)="openUpdateModal(user.id)">Update</button></div>
+                    <div><button type="button" class="btn btn-danger w-100" (click)="openDeleteModal(user.id)">Delete</button></div>
+                </div>
+            </div>
+        </div>
     </ng-container>
-
-    <ng-template #requirements>
-        <ng-container *ngIf="updatePwd.length >= 6; else tooShort">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req1 }}</p>
-        </ng-container>
-        <ng-template #tooShort>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req1 }}</p>
-        </ng-template>
-
-        <ng-container *ngIf="matchUpper(updatePwd); else noUpper">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req2 }}</p>
-        </ng-container>
-        <ng-template #noUpper>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req2 }}</p>
-        </ng-template>
-        
-        <ng-container *ngIf="matchLower(updatePwd); else noLower">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req3 }}</p>
-        </ng-container>
-        <ng-template #noLower>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req3 }}</p>
-        </ng-template>
-        
-        <ng-container *ngIf="matchNum(updatePwd); else noNum">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req4 }}</p>
-        </ng-container>
-        <ng-template #noNum>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req4 }}</p>
-        </ng-template>
-
-        <ng-container *ngIf="matchSpecial(updatePwd); else noSpecial">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req5 }}</p>
-        </ng-container>
-        <ng-template #noSpecial>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req5 }}</p>
-        </ng-template>
+    <ng-template #default>
+        <div *ngFor="let user of allUsers" class="userInfo bg-info m-4 p-4 box shadow">
+            <div class="row align-items-center">
+                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
+                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
+                </div>
+                <div class="col-md-3 col-lg-3 credentials-container">
+                    <p><strong>ID:</strong> {{ user.id }}</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Password:</strong> {{ user.password }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3 role-container">
+                    <p><strong>Role:</strong> {{ user.role }}</p>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn" (click)="openUpdateModal(user.id)">Update</button></div>
+                    <div><button type="button" class="btn btn-danger w-100" (click)="openDeleteModal(user.id)">Delete</button></div>
+                </div>
+            </div>
+        </div>
     </ng-template>
 </div>
