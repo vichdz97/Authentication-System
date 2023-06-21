@@ -12,6 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 export class UpdateComponent implements OnInit {
 
     @Input() userID!: number;
+    @Input() currentUser?: User;
     allUsers?: User[];
     user?: User;
     errorMessage: string = '';

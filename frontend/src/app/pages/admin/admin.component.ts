@@ -144,6 +144,7 @@ export class AdminComponent implements OnInit {
     openUpdateModal(id: number) {
         const modalRef = this.modalService.open(UpdateComponent, { centered: true });
         modalRef.componentInstance.userID = id;
+        modalRef.componentInstance.currentUser = this.currentUser;
         modalRef.closed.subscribe((updatedUser: User) => { 
             if (updatedUser.id)
                 this.updateUser(updatedUser);
@@ -168,6 +169,7 @@ export class AdminComponent implements OnInit {
     }
 
     searchUser() {
+        let searchedUser = {};
         this.filteredUsers = this.allUsers.map(user => {
             let id = user.id.toString();
             let username = user.username.toLowerCase();
@@ -178,9 +180,9 @@ export class AdminComponent implements OnInit {
                 username.includes(searchText) || 
                 password.includes(searchText) || 
                 role.includes(searchText)) {
-                return user;
+                searchedUser = user;
             }
-            return; 
+            return searchedUser; 
         }).filter(user => user);
     }
 
