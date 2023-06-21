@@ -25,8 +25,6 @@ export class AdminComponent implements OnInit {
         password: ['', [Validators.required]],
         role: ['', [Validators.required]],
     });
-  
-    showUpdateForm: boolean = false;
 
     showSearch: boolean = false;
     searchText!: string;
@@ -155,20 +153,14 @@ export class AdminComponent implements OnInit {
     updateUser(updatedUser: User) {
         if (updatedUser.id === this.currentUser?.id) {
             this.userService.updateCurrentUser(updatedUser).subscribe({
-                next: res => {
-                    this.showUpdateForm = false;
-                    this.ngOnInit();
-                },
+                next: res => this.ngOnInit(),
                 error: err => console.error("ERROR - Could not update user"),
                 complete: () => console.log("SUCCESS - User updated")
             });
         }
         else {
             this.userService.updateUser(updatedUser).subscribe({
-                next: res => {
-                    this.showUpdateForm = false;
-                    this.ngOnInit();
-                },
+                next: res => this.ngOnInit(),
                 error: err => console.error("ERROR - Could not update user"),
                 complete: () => console.log("SUCCESS - User updated")
             });
