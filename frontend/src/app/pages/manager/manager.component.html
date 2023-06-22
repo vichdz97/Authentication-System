@@ -2,15 +2,16 @@
 
 <div class="d-flex flex-column align-items-center">
     <h1 class="text-center mt-4">Welcome Manager</h1>
-    <button type="button" class="btn btn-secondary mx-1" (click)="displaySearch()">Search User</button>
+    <button type="button" class="btn btn-secondary mx-1 mt-2 mb-3" (click)="displaySearch()">Search User</button>
 
     <div *ngIf="showSearch" class="d-flex mt-2 mb-3">
-        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()">
+        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()" placeholder="Search">
         <button class="btn btn-secondary"><i class="bi bi-search"></i></button>
     </div>
 
     <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>
     <ng-container *ngIf="filteredUsers && searchText != ''; else default">
+        <h6 class="m-4 text-danger" [hidden]="filteredUsers">No results</h6>
         <div *ngFor="let user of filteredUsers" class="userInfo bg-info m-4 p-4 box shadow">
             <div class="row align-items-center">
                 <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
