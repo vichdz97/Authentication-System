@@ -41,7 +41,7 @@ export class ManagerComponent implements OnInit {
     }
 
     openDeleteModal(id: number) {
-        const modalRef = this.modalService.open(DeleteComponent);
+        const modalRef = this.modalService.open(DeleteComponent, { centered: true });
         modalRef.componentInstance.userID = id;
         modalRef.closed.subscribe((userDeleted: boolean) => {
             if (userDeleted) {

@@ -41,7 +41,7 @@ export class UserComponent implements OnInit {
     }
 
     openDeleteModal(id: number) {
-        const modalRef = this.modalService.open(DeleteComponent);
+        const modalRef = this.modalService.open(DeleteComponent, { centered: true });
         modalRef.componentInstance.userID = id;
         modalRef.closed.subscribe((userDeleted: boolean) => {
             if (userDeleted) {
@@ -59,7 +59,7 @@ export class UserComponent implements OnInit {
     }
 
     openUpdateModal(id: number) {
-        const modalRef = this.modalService.open(UpdateComponent);
+        const modalRef = this.modalService.open(UpdateComponent, { centered: true });
         modalRef.componentInstance.userID = id;
         modalRef.closed.subscribe((updatedUser: User) => {
             if (updatedUser.id) {
