@@ -13,7 +13,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ManagerComponent implements OnInit {
 
-    allUsers?: User[];
+    allUsers!: User[];
     currentUser?: User;
 
     showSearch: boolean = false;
@@ -77,8 +77,7 @@ export class ManagerComponent implements OnInit {
     }
 
     searchUser() {
-        this.filteredUsers = this.allUsers?.map(user => {
-            let returnedUser = {};
+        this.filteredUsers = this.allUsers.map(user => {
             let id = user.id.toString();
             let username = user.username.toLowerCase();
             let password = user.password.toLowerCase();
@@ -88,9 +87,9 @@ export class ManagerComponent implements OnInit {
                 username.includes(searchText) ||
                 password.includes(searchText) || 
                 role.includes(searchText)) {
-                    returnedUser = user;
+                return user;
             }
-            return returnedUser;
+            return null;
         }).filter(user => user);
     }
 

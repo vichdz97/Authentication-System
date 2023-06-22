@@ -169,7 +169,6 @@ export class AdminComponent implements OnInit {
     }
 
     searchUser() {
-        let searchedUser = {};
         this.filteredUsers = this.allUsers.map(user => {
             let id = user.id.toString();
             let username = user.username.toLowerCase();
@@ -180,9 +179,9 @@ export class AdminComponent implements OnInit {
                 username.includes(searchText) || 
                 password.includes(searchText) || 
                 role.includes(searchText)) {
-                searchedUser = user;
+                return user;
             }
-            return searchedUser; 
+            return null; 
         }).filter(user => user);
     }
 
