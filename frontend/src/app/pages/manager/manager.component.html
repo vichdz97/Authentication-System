@@ -27,7 +27,7 @@
                 <div class="col-md-3 col-lg-3 role-container">
                     <p><strong>Role:</strong> {{ user.role }}</p>
                 </div>
-                <div class="col-md-3 col-lg-3">
+                <div *ngIf="user.id === currentUser?.id || user.role === 'User'" class="col-md-3 col-lg-3">
                     <div><button type="button" class="btn btn-warning w-100" id="updateBtn" (click)="openUpdateModal(user.id)">Update</button></div>
                     <div><button type="button" class="btn btn-danger w-100" (click)="openDeleteModal(user.id)">Delete</button></div>
                 </div>
@@ -50,7 +50,7 @@
                 <div class="col-md-3 col-lg-3 role-container">
                     <p><strong>Role:</strong> {{ user.role }}</p>
                 </div>
-                <div class="col-md-3 col-lg-3">
+                <div *ngIf="user.id === currentUser?.id || user.role === 'User'" class="col-md-3 col-lg-3">
                     <div><button type="button" class="btn btn-warning w-100" id="updateBtn" (click)="openUpdateModal(user.id)">Update</button></div>
                     <div><button type="button" class="btn btn-danger w-100" (click)="openDeleteModal(user.id)">Delete</button></div>
                 </div>
