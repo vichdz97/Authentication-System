@@ -24,7 +24,7 @@ export class NavbarComponent {
     }
 
     confirmLogout() {
-        this.modalService.open(LogoutComponent);
+        this.modalService.open(LogoutComponent, { centered: true });
     }
 
 }
