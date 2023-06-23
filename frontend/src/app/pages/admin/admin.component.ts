@@ -63,8 +63,7 @@ export class AdminComponent implements OnInit {
         this.errorMessage = '';
         this.searchText = '';
         this.userForm.reset();
-        if (this.showSearch == true)
-            this.showSearch = false;
+        this.showSearch = false;
     }
 
     displaySearch() {
@@ -72,16 +71,20 @@ export class AdminComponent implements OnInit {
         this.searchText = '';
         this.errorMessage = '';
         this.successMessage = '';
-        if (this.showUserForm == true)
-            this.showUserForm = false;
+        this.showUserForm = false;
     }
 
     addUser() {
         let uname: string = this.usernameControl.value;
         let pwd: string = this.passwordControl.value;
-        let userRole: string = this.roleControl.value;
+        let _role: string = this.roleControl.value;
 
-        if (this.accountExists(uname, pwd)) {
+        if (this.accountExists(uname, pwd, _role)) {
+            this.errorMessage = "This account already exists!";
+            this.successMessage = '';
+            this.userForm.reset();
+        }
+        else if (this.userWordExists(uname, pwd)) {
             this.errorMessage = "This username and password already exists!";
             this.successMessage = '';
             this.userForm.reset();
@@ -90,7 +93,7 @@ export class AdminComponent implements OnInit {
             let newUser: User = <User> {
                 username: uname,
                 password: pwd,
-                role: userRole
+                role: _role
             };
     
             this.userService.createUser(newUser).subscribe({
@@ -105,7 +108,17 @@ export class AdminComponent implements OnInit {
         }
     }
 
-    accountExists(uname: string, pwd: string): boolean {
+    accountExists(uname: string, pwd: string, role: string): boolean {
+        let exists = false;
+        this.allUsers.forEach(user => {
+            if (uname === user.username && pwd === user.password && role === user.role) {
+                exists = true;
+            }
+        });
+        return exists;
+    }
+
+    userWordExists(uname: string, pwd: string): boolean {
         let exists = false;
         this.allUsers.forEach(user => {
             if (uname === user.username && pwd === user.password) {
