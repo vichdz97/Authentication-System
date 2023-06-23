@@ -80,11 +80,12 @@ export class UpdateComponent implements OnInit {
             role: this.updatedRoleControl.value ? this.updatedRoleControl.value : this.user?.role
         };
 
-        if (this.userWordExists(updatedUser.username, updatedUser.password)) {
+        if (this.accountExists(updatedUser.username, updatedUser.password, updatedUser.role)) {
+            this.errorMessage = "This account already exists!";
+            this.updateUserForm.reset();
+        }
+        else if (this.userWordExists(updatedUser.username, updatedUser.password)) {
             this.errorMessage = "This username and password already exists!";
-            if (this.accountExists(updatedUser.username, updatedUser.password, updatedUser.role)) {
-                this.errorMessage = "This account already exists!";
-            }
             this.updateUserForm.reset();
         }
         else {
