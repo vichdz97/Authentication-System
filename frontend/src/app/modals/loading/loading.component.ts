@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
@@ -11,8 +11,8 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class LoadingComponent implements OnInit {
 
+    @Input() newUser!: User;
     users!: User[];
-    usersLoaded: boolean = false;
 
     constructor(
         private userService: UserService,
@@ -25,23 +25,26 @@ export class LoadingComponent implements OnInit {
             next: data => this.users = data,
             error: err => console.error("ERROR - Could not retrieve users"),
             complete: () => {
-                this.usersLoaded = true;
                 console.log("SUCCESS - Users retrieved");
+                this.redirect();
             }
         });
     }
 
     redirect() {
         setTimeout(() => { 
-            let userID = this.users[this.users.length - 1].id;
-            this.userService.getUser(userID).subscribe({
-                next: res =>  {
-                    this.activeModal.close();
-                    this.router.navigateByUrl('/user');
-                },
-                error: err => console.error("ERROR - User does not exist"),
-                complete: () => console.log(`SUCCESS - User #${userID} retrieved`)
-            })  
+            this.users.forEach(user => {
+                if (user.username === this.newUser.username && user.password === this.newUser.password) {
+                    this.userService.getUser(user.id).subscribe({
+                        next: res =>  {
+                            this.activeModal.close();
+                            this.router.navigateByUrl('/user');
+                        },
+                        error: err => console.error("ERROR - User does not exist"),
+                        complete: () => console.log(`SUCCESS - User #${user.id} retrieved`)
+                    })
+                }
+            });  
         }, 1500);
     }
 

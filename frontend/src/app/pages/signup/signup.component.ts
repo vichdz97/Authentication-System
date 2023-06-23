@@ -14,6 +14,7 @@ import { UserService } from 'src/app/services/user.service';
 export class SignupComponent implements OnInit {
 
     users!: User[];
+    newUser: User = <User> { role: 'User' };
     alertMessage: string = '';
     successMessage: string = '';
 
@@ -61,6 +62,66 @@ export class SignupComponent implements OnInit {
         return this.signUpForm.get('confirm') as FormControl;
     }
 
+    onSubmit() {
+        let uname: string = this.usernameControl.value;
+        let pwd: string = this.passwordControl.value;
+        if (this.accountExists(uname, pwd)) {
+            this.successMessage = "";
+            this.alertMessage = "Sorry! This account already exists."
+        }
+        else {
+            this.alertMessage = "";
+            this.createAccount(uname, pwd);
+            const modalRef = this.modalService.open(LoadingComponent, { centered: true });            
+            modalRef.componentInstance.newUser = this.newUser;
+        }
+        this.signUpForm.reset();
+        this.signUpForm.get('password')?.setValue('');
+    }
+
+    accountExists(uname: string, pwd: string) {
+        let exists = false;
+        this.users.forEach(user => {
+            if (uname === user.username && pwd === user.password) {
+                exists = true;
+            }
+        });
+        return exists;
+    }
+
+    createAccount(uname: string, pwd: string) {
+        this.newUser = {
+            ...this.newUser,
+            username: uname,
+            password: pwd
+        };
+
+        this.userService.createUser(this.newUser).subscribe({
+            next: res => {
+                this.successMessage = "Account successfully created!";
+                this.ngOnInit();
+            },
+            error: err => console.error("ERROR - Could not create account"),
+            complete: () => console.log("SUCCESS - Account created")
+        });
+    }
+
+    togglePassword() {
+        this.hidden = !this.hidden;
+    }
+
+    togglePassword2() {
+        this.hidden2 = !this.hidden2;
+    }
+
+    hasErrors(control: FormControl) {
+        return control.invalid && (control.dirty || control.touched);
+    }
+
+    passwordsMatch() {
+        return this.passwordControl.value !== '' && this.passwordControl.value === this.confirmControl.value;
+    }
+
     matchUpper(str: string) {
         return str.match(/^.*[A-Z].*$/);
     }
@@ -79,65 +140,6 @@ export class SignupComponent implements OnInit {
 
     matchAll(str: string) {
         return this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
-    }
-
-    passwordsMatch() {
-        return this.passwordControl.value !== '' && this.passwordControl.value === this.confirmControl.value;
-    }
-
-    togglePassword() {
-        this.hidden = !this.hidden;
-    }
-
-    togglePassword2() {
-        this.hidden2 = !this.hidden2;
-    }
-
-    hasErrors(control: FormControl) {
-        return control.invalid && (control.dirty || control.touched);
-    }
-
-    onSubmit() {
-        let uname: string = this.usernameControl.value;
-        let pwd: string = this.passwordControl.value;
-        if (this.accountExists(uname, pwd)) {
-            this.successMessage = "";
-            this.alertMessage = "Sorry! This account already exists."
-        }
-        else {
-            this.alertMessage = "";
-            this.createAccount(uname, pwd);
-            this.modalService.open(LoadingComponent, { centered: true });
-        }
-        this.signUpForm.reset();
-        this.signUpForm.get('password')?.setValue('');
-    }
-
-    accountExists(uname: string, pwd: string) {
-        let exists = false;
-        this.users.forEach(user => {
-            if (uname === user.username && pwd === user.password) {
-                exists = true;
-            }
-        });
-        return exists;
-    }
-
-    createAccount(uname: string, pwd: string) {
-        let newUser: User = <User> {
-            username: uname,
-            password: pwd,
-            role: 'User'
-        };
-
-        this.userService.createUser(newUser).subscribe({
-            next: res => {
-                this.successMessage = "Account successfully created!";
-                this.ngOnInit();
-            },
-            error: err => console.error("ERROR - Could not create account"),
-            complete: () => console.log("SUCCESS - Account created")
-        });
     }
     
 }
