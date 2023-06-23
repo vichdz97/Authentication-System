@@ -185,4 +185,8 @@ export class AdminComponent implements OnInit {
         }).filter(user => user);
     }
 
+    clearSearch() {
+        this.searchText = '';
+    }
+
 }
