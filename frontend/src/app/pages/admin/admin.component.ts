@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
@@ -34,8 +35,11 @@ export class AdminComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private router: Router,
-        private modalService: NgbModal
-    ) { }
+        private modalService: NgbModal,
+        private titleService: Title
+    ) { 
+        this.titleService.setTitle("Authentication System | Administrator");
+    }
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({

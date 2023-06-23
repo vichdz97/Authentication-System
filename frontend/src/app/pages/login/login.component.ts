@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
@@ -23,8 +24,11 @@ export class LoginComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private router: Router,
-        private userService: UserService
-    ) { }
+        private userService: UserService,
+        private titleService: Title
+    ) { 
+        this.titleService.setTitle("Authentication System | Login");
+    }
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({

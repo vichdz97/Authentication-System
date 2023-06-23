@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { LoadingComponent } from 'src/app/modals/loading/loading.component';
@@ -34,8 +35,11 @@ export class SignupComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private modalService: NgbModal
-    ) { }
+        private modalService: NgbModal,
+        private titleService: Title
+    ) { 
+        this.titleService.setTitle("Authentication System | Sign Up");
+    }
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({

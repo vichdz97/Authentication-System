@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
@@ -22,8 +23,11 @@ export class ManagerComponent implements OnInit {
     constructor(
         private userService: UserService,
         private modalService: NgbModal,
-        private router: Router
-    ) { }
+        private router: Router,
+        private titleService: Title
+    ) { 
+        this.titleService.setTitle("Authentication System | Manager");
+    }
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({
