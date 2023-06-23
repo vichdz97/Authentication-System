@@ -46,7 +46,7 @@ export class ManagerComponent implements OnInit {
 
     deleteUser(id: number) {
         this.userService.deleteUser(id).subscribe({
-            next: res => this.router.navigateByUrl('/home'),
+            next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
             error: err => console.error("ERROR - Could not delete user"),
             complete: () => console.log("SUCCESS - User deleted")
         });

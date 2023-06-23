@@ -125,20 +125,11 @@ export class AdminComponent implements OnInit {
     }
 
     deleteUser(id: number) {
-        if (id === this.currentUser?.id) {
-            this.userService.deleteUser(id).subscribe({
-                next: res => this.router.navigateByUrl('/login'),
-                error: err => console.error("ERROR - Could not delete user"),
-                complete: () => console.log("SUCCESS - User deleted")
-            });
-        }
-        else {
-            this.userService.deleteUser(id).subscribe({
-                next: res => this.ngOnInit(),
-                error: err => console.error("ERROR - Could not delete user"),
-                complete: () => console.log("SUCCESS - User deleted")
-            });
-        }
+        this.userService.deleteUser(id).subscribe({
+            next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
+            error: err => console.error("ERROR - Could not delete user"),
+            complete: () => console.log("SUCCESS - User deleted")
+        });
     }
 
     openUpdateModal(id: number) {
