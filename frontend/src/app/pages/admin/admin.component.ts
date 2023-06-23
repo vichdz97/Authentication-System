@@ -19,8 +19,8 @@ export class AdminComponent implements OnInit {
     currentUser?: User;
 
     showUserForm: boolean = false;  
-    errorMessage: string = '';
-    successMessage: string = '';
+    errorMessage?: string;
+    successMessage?: string;
     userForm = this.fb.group({
         username: ['', [Validators.required]],
         password: ['', [Validators.required]],
@@ -65,6 +65,7 @@ export class AdminComponent implements OnInit {
     displayUserForm() {
         this.showUserForm = !this.showUserForm;
         this.errorMessage = '';
+        this.successMessage = '';
         this.searchText = '';
         this.userForm.reset();
         this.showSearch = false;
@@ -102,9 +103,9 @@ export class AdminComponent implements OnInit {
     
             this.userService.createUser(newUser).subscribe({
                 next: res => {
-                    this.successMessage = "User successfully added!";
                     this.displayUserForm();
                     this.ngOnInit();
+                    this.successMessage = "User successfully added!";
                 },
                 error: err => console.error("ERROR - Unable to create user"),
                 complete: () => console.log("SUCCESS - New user created")
