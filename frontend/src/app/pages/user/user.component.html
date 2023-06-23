@@ -2,11 +2,10 @@
 
 <div class="d-flex flex-column align-items-center">
     <h1 class="text-center mt-4">Welcome User</h1>
-    <button type="button" class="btn btn-secondary mx-1 mt-2 mb-3" (click)="displaySearch()">Search User</button>
 
-    <div *ngIf="showSearch" class="d-flex mt-2 mb-3">
+    <div class="d-flex my-2">
         <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUsers()" placeholder="Search">
-        <button class="btn btn-secondary"><i class="bi bi-search"></i></button>
+        <button class="btn btn-secondary" (click)="clearSearch()" [disabled]="!searchText">Clear</button>
     </div>
 
     <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>

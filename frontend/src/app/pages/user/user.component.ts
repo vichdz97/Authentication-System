@@ -17,7 +17,6 @@ export class UserComponent implements OnInit {
     currentUser?: User;
 
     searchText: string = '';
-    showSearch: boolean = false;
     filteredUsers: any;
 
     constructor(
@@ -33,11 +32,6 @@ export class UserComponent implements OnInit {
             complete: () => console.log("SUCCESS - All users retrieved")
         });
         this.currentUser = this.userService.currentUser;
-    }
-
-    displaySearch() {
-        this.showSearch = !this.showSearch;
-        this.searchText = '';
     }
 
     openDeleteModal(id: number) {
@@ -91,6 +85,10 @@ export class UserComponent implements OnInit {
             }
             return null;
         }).filter(user => user);
+    }
+
+    clearSearch() {
+        this.searchText = '';
     }
 
 }

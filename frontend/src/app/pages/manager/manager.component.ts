@@ -16,7 +16,6 @@ export class ManagerComponent implements OnInit {
     allUsers!: User[];
     currentUser?: User;
 
-    showSearch: boolean = false;
     searchText: string = '';
     filteredUsers: any;
 
@@ -33,11 +32,6 @@ export class ManagerComponent implements OnInit {
             complete:() => console.log("SUCCESS - Users displayed")
         });
         this.currentUser = this.userService.currentUser;
-    }
-
-    displaySearch() {
-        this.showSearch = !this.showSearch;
-        this.searchText = '';
     }
 
     openDeleteModal(id: number) {
@@ -91,6 +85,10 @@ export class ManagerComponent implements OnInit {
             }
             return null;
         }).filter(user => user);
+    }
+
+    clearSearch() {
+        this.searchText = '';
     }
 
 }
