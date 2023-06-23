@@ -61,7 +61,15 @@ export class UpdateComponent implements OnInit {
     }
 
     disableUpdateBtn(): boolean {
-        return this.user?.role != 'Administrator' && (!this.updatedPasswordControl.value || !this.matchAll(this.updatedPasswordControl.value)) && !this.updatedNameControl.value && !this.updatedRoleControl.value;
+        if (this.currentUser?.role === 'Administrator') {
+            return (!this.updatedNameControl.value && !this.updatedPasswordControl.value && !this.updatedRoleControl.value) ||
+            (this.updatedNameControl.value === this.user?.username) ||
+            (this.updatedPasswordControl.value === this.user?.password);
+        }
+        return (!this.updatedNameControl.value && !this.updatedPasswordControl.value) || 
+        (this.updatedPasswordControl.value && !this.matchAll(this.updatedPasswordControl.value)) || 
+        (this.updatedNameControl.value === this.user?.username) ||
+        (this.updatedPasswordControl.value === this.user?.password);
     }
 
     updateUser() {
