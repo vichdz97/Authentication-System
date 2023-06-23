@@ -19,6 +19,11 @@
     font-size: 1.5em;
 }
 
+.req {
+    margin: 0;
+    padding: 0;
+}
+
 @media screen and (min-width: 760px) {
     #uname {
         width: 350px;

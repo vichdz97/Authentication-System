@@ -12,39 +12,6 @@
             <i id="unameCheckmark" [ngClass]="usernameControl.valid ? 'bi-check2 text-success checkmark' : ''"></i>
         </div>
         <app-inline-error [control]="usernameControl"></app-inline-error>
-        
-        <ng-template #requirements>
-            <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
-                <p class="text-success"><i class="bi bi-check2"></i> {{ req1 }}</p>
-            </ng-container>
-            <ng-template #tooShort>
-                <p class="text-danger"><i class="bi bi-x"></i> {{ req1 }}</p>
-            </ng-template>
-            <ng-container *ngIf="matchUpper(passwordControl.value); else noUpper">
-                <p class="text-success"><i class="bi bi-check2"></i> {{ req2 }}</p>
-            </ng-container>
-            <ng-template #noUpper>
-                <p class="text-danger"><i class="bi bi-x"></i> {{ req2 }}</p>
-            </ng-template>
-            <ng-container *ngIf="matchLower(passwordControl.value); else noLower">
-                <p class="text-success"><i class="bi bi-check2"></i> {{ req3 }}</p>
-            </ng-container>
-            <ng-template #noLower>
-                <p class="text-danger"><i class="bi bi-x"></i> {{ req3 }}</p>
-            </ng-template>
-            <ng-container *ngIf="matchNum(passwordControl.value); else noNum">
-                <p class="text-success"><i class="bi bi-check2"></i> {{ req4 }}</p>
-            </ng-container>
-            <ng-template #noNum>
-                <p class="text-danger"><i class="bi bi-x"></i> {{ req4 }}</p>
-            </ng-template>
-            <ng-container *ngIf="matchSpecial(passwordControl.value); else noSpecial">
-                <p class="text-success"><i class="bi bi-check2"></i> {{ req5 }}</p>
-            </ng-container>
-            <ng-template #noSpecial>
-                <p class="text-danger"><i class="bi bi-x"></i> {{ req5 }}</p>
-            </ng-template>
-        </ng-template>
 
         <div class="my-4">
             <div class="form-floating d-flex align-items-center">
@@ -72,4 +39,37 @@
         <button type="submit" class="btn btn-primary w-100 mb-2" [disabled]="signUpForm.invalid || !matchAll(passwordControl.value) || !passwordsMatch()">Create Account</button>
     </form>
     <a class="nav-link mx-5" role="button" routerLink="/login">Already have an account? Sign in!</a>
+
+    <ng-template #requirements>
+        <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req1 }}</p>
+        </ng-container>
+        <ng-template #tooShort>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req1 }}</p>
+        </ng-template>
+        <ng-container *ngIf="matchUpper(passwordControl.value); else noUpper">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req2 }}</p>
+        </ng-container>
+        <ng-template #noUpper>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req2 }}</p>
+        </ng-template>
+        <ng-container *ngIf="matchLower(passwordControl.value); else noLower">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req3 }}</p>
+        </ng-container>
+        <ng-template #noLower>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req3 }}</p>
+        </ng-template>
+        <ng-container *ngIf="matchNum(passwordControl.value); else noNum">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req4 }}</p>
+        </ng-container>
+        <ng-template #noNum>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req4 }}</p>
+        </ng-template>
+        <ng-container *ngIf="matchSpecial(passwordControl.value); else noSpecial">
+            <p class="text-success req"><i class="bi bi-check2"></i> {{ req5 }}</p>
+        </ng-container>
+        <ng-template #noSpecial>
+            <p class="text-danger req"><i class="bi bi-x"></i> {{ req5 }}</p>
+        </ng-template>
+    </ng-template>
 </div>
