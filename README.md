@@ -6,13 +6,8 @@ The authentication system prompts the user for their login credentials (username
 ## Demo
 Click [here](http://authentication-system.s3-website.us-east-2.amazonaws.com/#/home) to access the live demo.
 
-## Team Members
-* [Shail Patel](https://github.com/shailpatel5)
-* [Tyler Gaynair](https://github.com/CSTyy)
-* [Victor Hernandez](https://github.com/vichdz97)
-* [Kwabena Asiama](https://github.com/kasiama1)
-
 ## Technologies
+* [AWS](https://aws.amazon.com/)
 * [Java](https://www.java.com/)
 * [Spring Boot](https://spring.io/)
 * [MySQL](https://www.mysql.com)
