@@ -20,9 +20,6 @@
                             {{ user ? "Hi " + user.username + "!" : "" }}
                         </a>
                     </li>
-                    <li>
-                        <a class="nav-link" role="button" (click)="openFAQ()">FAQ</a>
-                    </li>
                     <ng-container *ngIf="user; else signup">
                         <li>
                             <a class="nav-link" role="button" (click)="confirmLogout()">Logout</a> 

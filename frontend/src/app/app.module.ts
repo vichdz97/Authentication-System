@@ -18,7 +18,6 @@ import { UserComponent } from './pages/user/user.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { InlineErrorComponent } from './shared/inline-error/inline-error.component';
-import { HelpComponent } from './modals/help/help.component';
 import { LogoutComponent } from './modals/logout/logout.component';
 import { DeleteComponent } from './modals/delete/delete.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -36,7 +35,6 @@ import { UpdateComponent } from './modals/update/update.component';
     SignupComponent,
     ErrorComponent,
     InlineErrorComponent,
-    HelpComponent,
     LogoutComponent,
     DeleteComponent,
     LoadingComponent,
