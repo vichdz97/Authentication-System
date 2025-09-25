@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
@@ -29,7 +29,7 @@ export class UpdateComponent implements OnInit {
     req5: string = "At least 1 special character";
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         public activeModal: NgbActiveModal,
         private userService: UserService
     ) { }
@@ -48,16 +48,16 @@ export class UpdateComponent implements OnInit {
         });
     }
 
-    get updatedNameControl(): FormControl {
-        return this.updateUserForm.get('updatedName') as FormControl;
+    get updatedNameControl(): UntypedFormControl {
+        return this.updateUserForm.get('updatedName') as UntypedFormControl;
     }
     
-    get updatedPasswordControl(): FormControl {
-        return this.updateUserForm.get('updatedPassword') as FormControl;
+    get updatedPasswordControl(): UntypedFormControl {
+        return this.updateUserForm.get('updatedPassword') as UntypedFormControl;
     }
     
-    get updatedRoleControl(): FormControl {
-        return this.updateUserForm.get('updatedRole') as FormControl;
+    get updatedRoleControl(): UntypedFormControl {
+        return this.updateUserForm.get('updatedRole') as UntypedFormControl;
     }
 
     disableUpdateBtn(): boolean {

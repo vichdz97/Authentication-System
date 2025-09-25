@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -32,7 +32,7 @@ export class AdminComponent implements OnInit {
     filteredUsers: any;
 
     constructor(
-        private fb: FormBuilder,
+        private fb: UntypedFormBuilder,
         private userService: UserService,
         private router: Router,
         private modalService: NgbModal,
@@ -50,16 +50,16 @@ export class AdminComponent implements OnInit {
         this.currentUser = this.userService.currentUser;
     }
 
-    get usernameControl(): FormControl {
-        return this.userForm.get('username') as FormControl;
+    get usernameControl(): UntypedFormControl {
+        return this.userForm.get('username') as UntypedFormControl;
     }
 
-    get passwordControl(): FormControl {
-        return this.userForm.get('password') as FormControl;
+    get passwordControl(): UntypedFormControl {
+        return this.userForm.get('password') as UntypedFormControl;
     }
 
-    get roleControl(): FormControl {
-        return this.userForm.get('role') as FormControl;
+    get roleControl(): UntypedFormControl {
+        return this.userForm.get('role') as UntypedFormControl;
     }
 
     displayUserForm() {
