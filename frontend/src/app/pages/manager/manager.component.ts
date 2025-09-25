@@ -10,7 +10,8 @@ import { UserService } from 'src/app/services/user.service';
 @Component({
     selector: 'app-manager',
     templateUrl: './manager.component.html',
-    styleUrls: ['./manager.component.css']
+    styleUrls: ['./manager.component.css'],
+    standalone: false
 })
 export class ManagerComponent implements OnInit {
 
