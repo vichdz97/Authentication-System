@@ -7,8 +7,7 @@ import { UserService } from 'src/app/services/user.service';
 @Component({
     selector: 'app-update',
     templateUrl: './update.component.html',
-    styleUrls: ['./update.component.css'],
-    standalone: false
+    styleUrls: ['./update.component.css']
 })
 export class UpdateComponent implements OnInit {
 

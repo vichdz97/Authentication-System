@@ -24,7 +24,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { LoadingComponent } from './modals/loading/loading.component';
 import { UpdateComponent } from './modals/update/update.component';
 
-@NgModule({ declarations: [
+@NgModule({ 
+    declarations: [
         AppComponent,
         LoginComponent,
         AdminComponent,
@@ -39,11 +40,20 @@ import { UpdateComponent } from './modals/update/update.component';
         LoadingComponent,
         UpdateComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [
+        BrowserModule,
         AppRoutingModule,
         RouterModule,
         ReactiveFormsModule,
         FormsModule,
-        NgbModule], providers: [UserService, AuthGuard,
-        { provide: LocationStrategy, useClass: HashLocationStrategy }, provideHttpClient(withInterceptorsFromDi())] })
+        NgbModule
+    ], 
+    providers: [
+        UserService, 
+        AuthGuard,
+        { provide: LocationStrategy, useClass: HashLocationStrategy }, 
+        provideHttpClient(withInterceptorsFromDi())
+    ] 
+})
 export class AppModule { }

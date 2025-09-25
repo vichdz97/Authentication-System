@@ -4,8 +4,7 @@ import { UntypedFormControl } from '@angular/forms';
 @Component({
     selector: 'app-inline-error',
     templateUrl: './inline-error.component.html',
-    styleUrls: ['./inline-error.component.css'],
-    standalone: false
+    styleUrls: ['./inline-error.component.css']
 })
 export class InlineErrorComponent {
 
