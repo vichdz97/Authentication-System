@@ -2,16 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
-import { DeleteComponent } from 'src/app/modals/delete/delete.component';
-import { UpdateComponent } from 'src/app/modals/update/update.component';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-admin',
     templateUrl: './admin.component.html',
-    styleUrls: ['./admin.component.css']
+    styleUrls: ['./admin.component.css'],
+    standalone: false
 })
 export class AdminComponent implements OnInit {
 
@@ -35,7 +33,6 @@ export class AdminComponent implements OnInit {
         private fb: UntypedFormBuilder,
         private userService: UserService,
         private router: Router,
-        private modalService: NgbModal,
         private titleService: Title
     ) { 
         this.titleService.setTitle("Authentication System | Administrator");
@@ -133,30 +130,11 @@ export class AdminComponent implements OnInit {
         return exists;
     }
 
-    openDeleteModal(id: number) {
-        const modalRef = this.modalService.open(DeleteComponent, { centered: true });
-        modalRef.componentInstance.userID = id;
-        modalRef.closed.subscribe((canDelete: boolean) => {
-            if (canDelete)
-                this.deleteUser(id);
-        });
-    }
-
     deleteUser(id: number) {
         this.userService.deleteUser(id).subscribe({
             next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
             error: err => console.error("ERROR - Could not delete user"),
             complete: () => console.log("SUCCESS - User deleted")
-        });
-    }
-
-    openUpdateModal(id: number) {
-        const modalRef = this.modalService.open(UpdateComponent, { centered: true });
-        modalRef.componentInstance.userID = id;
-        modalRef.componentInstance.currentUser = this.currentUser;
-        modalRef.closed.subscribe((updatedUser: User) => { 
-            if (updatedUser.id)
-                this.updateUser(updatedUser);
         });
     }
 

@@ -17,7 +17,7 @@
             <div class="form-floating d-flex align-items-center">
                 <input [type]="hidden ? 'password' : 'text'" id="pwd" class="form-control" formControlName="password" placeholder="Password"
                     [ngStyle]="hasErrors(passwordControl) ? {'border-color':'#dc3545'} : (matchAll(passwordControl.value) ? {'border-color':'#198754'} : {})"
-                    [ngbPopover]="requirements" popoverTitle="Requirements" placement="right top" container="body">
+                    popoverTitle="Requirements" placement="right top" container="body">
                 <label for="pwd" class="form-label">Password</label>
                 <button type="button" class="btn eyeBtn" (click)="togglePassword()"><i [ngClass]="hidden ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i></button>
                 <i [ngClass]="matchAll(passwordControl.value) ? 'bi bi-check2 text-success checkmark' : ''"></i>

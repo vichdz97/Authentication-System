@@ -1,11 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-delete',
     templateUrl: './delete.component.html',
-    styleUrls: ['./delete.component.css']
+    styleUrls: ['./delete.component.css'],
+    standalone: false
 })
 export class DeleteComponent implements OnInit {
 
@@ -14,7 +14,6 @@ export class DeleteComponent implements OnInit {
     role?: string;
 
     constructor(
-        public activeModal: NgbActiveModal,
         private userService: UserService
     ) { }
 
@@ -28,9 +27,4 @@ export class DeleteComponent implements OnInit {
             complete: () => console.log("SUCCESS - User retrieved")
         });
     }
-
-    deleteUser() {
-        this.activeModal.close(true);
-    }
-
 }

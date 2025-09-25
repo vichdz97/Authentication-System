@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h5>Update user information</h5>
-    <button type="button" class="btn" aria-label="Close" (click)="activeModal.dismiss('Cross click')">&times;</button>
+    <button type="button" class="btn" aria-label="Close">&times;</button>
 </div>
 <div class="modal-body">
     <p class="text-danger text-center m-0" [hidden]="errorMessage == '' || updateUserForm.dirty || updateUserForm.touched">{{ errorMessage }}</p>
@@ -22,12 +22,12 @@
 
         <ng-template #notAdmin>
             <input type="text" id="pwd" class="form-control" formControlName="updatedPassword" placeholder="{{ user?.password }}"
-                [ngbPopover]="requirements" popoverTitle="Requirements" placement="top" container="body">
+                popoverTitle="Requirements" placement="top" container="body">
         </ng-template>
     </form>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('No click')">Cancel</button>
+    <button type="button" class="btn btn-outline-dark">Cancel</button>
     <button type="button" class="btn btn-warning" (click)="updateUser()" [disabled]="disableUpdateBtn()">Update</button>
 </div>
 

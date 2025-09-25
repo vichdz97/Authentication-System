@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { LoadingComponent } from 'src/app/modals/loading/loading.component';
 import { UserService } from 'src/app/services/user.service';
@@ -9,7 +8,8 @@ import { UserService } from 'src/app/services/user.service';
 @Component({
     selector: 'app-signup',
     templateUrl: './signup.component.html',
-    styleUrls: ['./signup.component.css']
+    styleUrls: ['./signup.component.css'],
+    standalone: false
 })
 export class SignupComponent implements OnInit {
 
@@ -36,7 +36,6 @@ export class SignupComponent implements OnInit {
     constructor(
         private fb: UntypedFormBuilder,
         private userService: UserService,
-        private modalService: NgbModal,
         private titleService: Title
     ) { 
         this.titleService.setTitle("Authentication System | Sign Up");
@@ -72,8 +71,6 @@ export class SignupComponent implements OnInit {
         else {
             this.alertMessage = "";
             this.createAccount(uname, pwd);
-            const modalRef = this.modalService.open(LoadingComponent, { centered: true });            
-            modalRef.componentInstance.newUser = this.newUser;
         }
         this.signUpForm.reset();
         this.signUpForm.get('password')?.setValue('');

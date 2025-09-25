@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-update',
     templateUrl: './update.component.html',
-    styleUrls: ['./update.component.css']
+    styleUrls: ['./update.component.css'],
+    standalone: false
 })
 export class UpdateComponent implements OnInit {
 
@@ -30,7 +30,6 @@ export class UpdateComponent implements OnInit {
 
     constructor(
         private fb: UntypedFormBuilder,
-        public activeModal: NgbActiveModal,
         private userService: UserService
     ) { }
 
@@ -87,9 +86,6 @@ export class UpdateComponent implements OnInit {
         else if (this.userWordExists(updatedUser.username, updatedUser.password)) {
             this.errorMessage = "This username and password already exists!";
             this.updateUserForm.reset();
-        }
-        else {
-            this.activeModal.close(updatedUser);
         }
     }
 
