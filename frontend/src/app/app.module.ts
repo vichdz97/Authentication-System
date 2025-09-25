@@ -1,6 +1,6 @@
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -24,34 +24,26 @@ import { AuthGuard } from './guards/auth.guard';
 import { LoadingComponent } from './modals/loading/loading.component';
 import { UpdateComponent } from './modals/update/update.component';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    AdminComponent,
-    NavbarComponent,
-    ManagerComponent,
-    UserComponent,
-    SignupComponent,
-    ErrorComponent,
-    InlineErrorComponent,
-    LogoutComponent,
-    DeleteComponent,
-    LoadingComponent,
-    UpdateComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    RouterModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgbModule
-  ],
-  providers: [UserService, AuthGuard,
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        LoginComponent,
+        AdminComponent,
+        NavbarComponent,
+        ManagerComponent,
+        UserComponent,
+        SignupComponent,
+        ErrorComponent,
+        InlineErrorComponent,
+        LogoutComponent,
+        DeleteComponent,
+        LoadingComponent,
+        UpdateComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        RouterModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NgbModule], providers: [UserService, AuthGuard,
+        { provide: LocationStrategy, useClass: HashLocationStrategy }, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
