@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { User } from 'src/app/interfaces/user';
-import { LoadingComponent } from 'src/app/modals/loading/loading.component';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -34,7 +33,7 @@ export class SignupComponent implements OnInit {
     hidden2: boolean = true;
   
     constructor(
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         private userService: UserService,
         private titleService: Title
     ) { 
@@ -49,16 +48,16 @@ export class SignupComponent implements OnInit {
         });
     }
 
-    get usernameControl(): UntypedFormControl {
-        return this.signUpForm.get('username') as UntypedFormControl;
+    get usernameControl(): FormControl {
+        return this.signUpForm.get('username') as FormControl;
     }
 
-    get passwordControl(): UntypedFormControl {
-        return this.signUpForm.get('password') as UntypedFormControl;
+    get passwordControl(): FormControl {
+        return this.signUpForm.get('password') as FormControl;
     }
 
-    get confirmControl(): UntypedFormControl {
-        return this.signUpForm.get('confirm') as UntypedFormControl;
+    get confirmControl(): FormControl {
+        return this.signUpForm.get('confirm') as FormControl;
     }
 
     onSubmit() {
@@ -111,7 +110,7 @@ export class SignupComponent implements OnInit {
         this.hidden2 = !this.hidden2;
     }
 
-    hasErrors(control: UntypedFormControl) {
+    hasErrors(control: FormControl) {
         return control.invalid && (control.dirty || control.touched);
     }
 

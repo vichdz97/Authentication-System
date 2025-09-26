@@ -1,44 +1,88 @@
-<app-navbar></app-navbar>
-<div class="h-75 d-flex flex-column justify-content-center align-items-center text-center">
-    <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="mt-5">
-        <h1>Sign Up</h1>
-        <p class="text-danger" [hidden]="signUpForm.dirty || signUpForm.touched">{{ alertMessage }}</p>
-        <p class="text-success" [hidden]="signUpForm.dirty || signUpForm.touched">{{ successMessage }}</p>
-       
-        <div class="form-floating mt-3">
-            <input type="text" id="uname" class="form-control" formControlName="username" placeholder="Username"
-                [ngStyle]="hasErrors(usernameControl) ? {'border-color':'#dc3545'} : (usernameControl.valid ? {'border-color': '#198754'} : {})">
-            <label for="uname" class="form-label">Username</label>
-            <i id="unameCheckmark" [ngClass]="usernameControl.valid ? 'bi-check2 text-success checkmark' : ''"></i>
-        </div>
-        <app-inline-error [control]="usernameControl"></app-inline-error>
+<div class="min-h-screen w-1/2 md:w-1/3 mx-auto flex flex-col justify-center items-center">
+    <form 
+        class="w-full flex flex-col items-center gap-2"
+        [formGroup]="signUpForm" 
+        (ngSubmit)="onSubmit()"
+    >
+        <h1 class="w-screen text-center text-slate-100 text-4xl font-bold">Sign Up</h1>
+        <p class="text-red-500" [hidden]="signUpForm.dirty || signUpForm.touched">{{ alertMessage }}</p>
+        <p class="text-green-600 mb-3" [hidden]="signUpForm.dirty || signUpForm.touched">{{ successMessage }}</p>
 
-        <div class="my-4">
-            <div class="form-floating d-flex align-items-center">
-                <input [type]="hidden ? 'password' : 'text'" id="pwd" class="form-control" formControlName="password" placeholder="Password"
+        <div class="w-full flex flex-col items-center gap-1">
+            <div class="w-full flex items-center relative">
+                <input 
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    type="text" 
+                    id="username" 
+                    formControlName="username"
+                    placeholder="Username"
+                    [ngStyle]="hasErrors(usernameControl) ? {'border-color':'#dc3545'} : (usernameControl.valid ? {'border-color': '#198754'} : {})"
+                />
+                @if (usernameControl.valid) {
+                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
+                }
+            </div>
+            <app-inline-error [control]="usernameControl"></app-inline-error>
+        </div>
+
+        <div class="w-full flex flex-col items-center gap-1">
+            <div class="w-full flex items-center relative">
+                <input 
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    [type]="hidden ? 'password' : 'text'"
+                    id="password" 
+                    formControlName="password"
+                    placeholder="Password"
                     [ngStyle]="hasErrors(passwordControl) ? {'border-color':'#dc3545'} : (matchAll(passwordControl.value) ? {'border-color':'#198754'} : {})"
-                    popoverTitle="Requirements" placement="right top" container="body">
-                <label for="pwd" class="form-label">Password</label>
-                <button type="button" class="btn eyeBtn" (click)="togglePassword()"><i [ngClass]="hidden ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i></button>
-                <i [ngClass]="matchAll(passwordControl.value) ? 'bi bi-check2 text-success checkmark' : ''"></i>
+                    popoverTitle="Requirements"
+                    placement="right top"
+                    container="body"
+                />
+                <lucide-icon 
+                    [name]="hidden ? 'eye' : 'eye-closed'"
+                    class="absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
+                    (click)="togglePassword()"
+                />
+                @if (matchAll(passwordControl.value)) {
+                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
+                }
             </div>
             <app-inline-error [control]="passwordControl"></app-inline-error>
         </div>
 
-        <div class="mb-4">
-            <div class="form-floating d-flex align-items-center">
-                <input [type]="hidden2 ? 'password' : 'text'" id="confirmPwd" class="form-control" formControlName="confirm" placeholder="Confirm Password"
-                    [ngStyle]="hasErrors(confirmControl) ? {'border-color':'#dc3545'} : (passwordsMatch() ? {'border-color':'#198754'} : {})">
-                <label for="confirmPwd" class="form-label">Confirm Password</label>
-                <button type="button" class="btn eyeBtn" (click)="togglePassword2()"><i [ngClass]="hidden2 ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i></button>
-                <i [ngClass]="passwordsMatch() ? 'bi-check2 text-success checkmark' : ''"></i>
+        <div class="w-full flex flex-col items-center gap-1">
+            <div class="w-full flex items-center relative">
+                <input 
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    [type]="hidden2 ? 'password' : 'text'"
+                    id="confirmPassword" 
+                    formControlName="confirm"
+                    placeholder="Confirm Password"
+                    [ngStyle]="hasErrors(confirmControl) ? {'border-color':'#dc3545'} : (passwordsMatch() ? {'border-color':'#198754'} : {})"
+                />
+                <lucide-icon 
+                    [name]="hidden2 ? 'eye' : 'eye-closed'"
+                    class="absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
+                    (click)="togglePassword2()"
+                />
+                @if (passwordsMatch()) {
+                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
+                }
             </div>
             <app-inline-error [control]="confirmControl"></app-inline-error>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100 mb-2" [disabled]="signUpForm.invalid || !matchAll(passwordControl.value) || !passwordsMatch()">Create Account</button>
+        <button 
+            type="submit" 
+            class="bg-blue-500 w-full my-4 px-3 py-2 rounded-2xl text-slate-100 transition-colors hover:bg-blue-600" 
+            [disabled]="signUpForm.invalid || !matchAll(passwordControl.value) || !passwordsMatch()"
+        >
+            Create Account
+        </button>
     </form>
-    <a class="nav-link mx-5" role="button" routerLink="/login">Already have an account? Sign in!</a>
+    <a class="text-blue-500 text-center transition-colors hover:text-blue-600" routerLink="/login">
+        Already have an account? <br class="md:hidden">Sign in!
+    </a>
 
     <ng-template #requirements>
         <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
