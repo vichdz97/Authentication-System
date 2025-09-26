@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
     });
 
     constructor(
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         private router: Router,
         private userService: UserService,
         private titleService: Title
@@ -39,12 +39,12 @@ export class LoginComponent implements OnInit {
         });
     }
 
-    get usernameControl(): UntypedFormControl {
-        return this.loginForm.get('username') as UntypedFormControl;
+    get usernameControl(): FormControl {
+        return this.loginForm.get('username') as FormControl;
     }
 
-    get passwordControl(): UntypedFormControl {
-        return this.loginForm.get('password') as UntypedFormControl;
+    get passwordControl(): FormControl {
+        return this.loginForm.get('password') as FormControl;
     }
 
     onSubmit() {
