@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { LogoutComponent } from 'src/app/modals/logout/logout.component';
 
 @Component({
     selector: 'app-navbar',

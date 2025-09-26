@@ -1,15 +1,32 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <h1 class="navbar-brand mb-0 mx-3 d-flex align-items-center">
-            <img src="assets/shield-blue.png" alt="Authentication System logo">
-            <span class="m-2">Authentication System</span>
+<div class="w-full p-4 fixed top-0">
+    <nav class="flex justify-between items-center">
+        <h1 class="flex items-center">
+            <img src="assets/shield-blue.png" alt="Authentication System logo" width="50" />
+            <span class="font-semibold text-slate-100 hover:cursor-default">Authentication System</span>
         </h1>
 
-        <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
-            &#9776;
-        </button>
+        <ul class="flex items-center gap-4 text-slate-100">
+            @if (user) {
+                <li>Welcome, {{ user.username }}</li>
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default" routerLink="/login">Logout</a>
+                </li>
+            }
+            @else {
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default" routerLink="/login">Login</a>
+                </li>
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default" routerLink="/signup">Sign Up</a>
+                </li>
+            }
+        </ul>
 
-        <div class="collapse navbar-collapse">
+        <!-- <button type="button" class="text-slate-100" (click)="isCollapsed = !isCollapsed">
+            &#9776;
+        </button> -->
+    
+        <!-- <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li></li>
             </ul>
@@ -35,6 +52,6 @@
                     </ng-template>
                 </ul>
             </span>
-        </div>
-    </div>
-</nav>
+        </div> -->
+    </nav>
+</div>
