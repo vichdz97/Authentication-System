@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-inline-error',
@@ -9,6 +9,6 @@ import { UntypedFormControl } from '@angular/forms';
 })
 export class InlineErrorComponent {
 
-  @Input() control!: UntypedFormControl;
+  @Input() control!: FormControl;
 
 }
