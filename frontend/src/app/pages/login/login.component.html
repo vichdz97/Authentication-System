@@ -8,23 +8,25 @@
         <p class="text-red-500">{{ invalidMsg }}</p>
         <div class="w-full flex flex-col items-center gap-1">
             <input 
-                class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 border
+                    {{ usernameControl.invalid && (usernameControl.dirty || usernameControl.touched) ? 'border-red-600' : 'border-none' }}
+                    focus:outline-sky-500"
                 type="text" 
                 id="username" 
                 formControlName="username"
                 placeholder="Username"
-                [ngStyle]="usernameControl.invalid && (usernameControl.dirty || usernameControl.touched) ? {'border-color':'#dc3545'} : {}"
             />
             <app-inline-error [control]="usernameControl"></app-inline-error>
         </div>
         <div class="w-full flex flex-col items-center gap-1">
             <input 
-                class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 border
+                    {{ passwordControl.invalid && (passwordControl.dirty || passwordControl.touched) ? 'border-red-600' : 'border-none' }}
+                    focus:outline-sky-500"
                 type="password" 
                 id="password" 
                 formControlName="password" 
                 placeholder="Password"
-                [ngStyle]="passwordControl.invalid && (passwordControl.dirty || passwordControl.touched) ? {'border-color':'#dc3545'} : {}"
             />
             <app-inline-error [control]="passwordControl"></app-inline-error>
         </div>
