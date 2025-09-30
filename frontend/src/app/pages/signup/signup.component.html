@@ -1,3 +1,4 @@
+<app-navbar></app-navbar>
 <div class="min-h-screen w-1/2 md:w-1/3 mx-auto flex flex-col justify-center items-center">
     <form 
         class="w-full flex flex-col items-center gap-2"
@@ -5,115 +6,99 @@
         (ngSubmit)="onSubmit()"
     >
         <h1 class="w-screen text-center text-slate-100 text-4xl font-bold">Sign Up</h1>
-        <p class="text-red-500" [hidden]="signUpForm.dirty || signUpForm.touched">{{ alertMessage }}</p>
-        <p class="text-green-600 mb-3" [hidden]="signUpForm.dirty || signUpForm.touched">{{ successMessage }}</p>
+        <p class="text-red-600" [hidden]="signUpForm.dirty || signUpForm.touched">{{ alertMessage }}</p>
+        <p class="text-green-600" [hidden]="signUpForm.dirty || signUpForm.touched">{{ successMessage }}</p>
 
         <div class="w-full flex flex-col items-center gap-1">
             <div class="w-full flex items-center relative">
                 <input 
-                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 border-2
+                        {{ hasErrors(usernameControl) ? 'border-red-600' : (usernameControl.valid ? 'border-green-600' : 'border-none') }}
+                        focus:outline-sky-500"
                     type="text" 
                     id="username" 
                     formControlName="username"
                     placeholder="Username"
-                    [ngStyle]="hasErrors(usernameControl) ? {'border-color':'#dc3545'} : (usernameControl.valid ? {'border-color': '#198754'} : {})"
                 />
-                @if (usernameControl.valid) {
-                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
-                }
+                <lucide-icon name="check" [hidden]="!usernameControl.valid" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
             </div>
             <app-inline-error [control]="usernameControl"></app-inline-error>
         </div>
 
-        <div class="w-full flex flex-col items-center gap-1">
+        <div class="w-full flex flex-col items-center justify-center gap-1">
             <div class="w-full flex items-center relative">
                 <input 
-                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 border-2
+                        {{ hasErrors(passwordControl) ? 'border-red-600' : (matchAll(passwordControl.value) ? 'border-green-600' : 'border-none') }}
+                        focus:outline-sky-500"
                     [type]="hidden ? 'password' : 'text'"
                     id="password" 
                     formControlName="password"
                     placeholder="Password"
-                    [ngStyle]="hasErrors(passwordControl) ? {'border-color':'#dc3545'} : (matchAll(passwordControl.value) ? {'border-color':'#198754'} : {})"
-                    popoverTitle="Requirements"
-                    placement="right top"
-                    container="body"
                 />
                 <lucide-icon 
                     [name]="hidden ? 'eye' : 'eye-closed'"
                     class="absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
                     (click)="togglePassword()"
                 />
-                @if (matchAll(passwordControl.value)) {
-                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
-                }
+                <lucide-icon name="check" [hidden]="!matchAll(passwordControl.value)" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
             </div>
+            @if (passwordControl.value) {
+                <div class="text-sm">
+                    <div class="flex items-center gap-2 {{ passwordControl.value.length >= 6 ? 'text-green-600' : 'text-red-600' }}">
+                        <lucide-icon [name]="passwordControl.value.length >= 6 ? 'check' : 'x'" class="w-[1.25em]" />
+                        <span>{{ req1 }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 {{ matchUpper(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
+                        <lucide-icon [name]="matchUpper(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
+                        <span>{{ req2 }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 {{ matchLower(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
+                        <lucide-icon [name]="matchLower(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
+                        <span>{{ req3 }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 {{ matchNum(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
+                        <lucide-icon [name]="matchNum(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
+                        <span>{{ req4 }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 {{ matchSpecial(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
+                        <lucide-icon [name]="matchSpecial(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
+                        <span>{{ req5 }}</span>
+                    </div>
+                </div>
+            }
             <app-inline-error [control]="passwordControl"></app-inline-error>
         </div>
 
         <div class="w-full flex flex-col items-center gap-1">
             <div class="w-full flex items-center relative">
                 <input 
-                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400"
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 border-2
+                        {{ hasErrors(confirmControl) ? 'border-red-600' : (passwordsMatch() ? 'border-green-600' : 'border-none') }}
+                        focus:outline-sky-500"
                     [type]="hidden2 ? 'password' : 'text'"
                     id="confirmPassword" 
                     formControlName="confirm"
                     placeholder="Confirm Password"
-                    [ngStyle]="hasErrors(confirmControl) ? {'border-color':'#dc3545'} : (passwordsMatch() ? {'border-color':'#198754'} : {})"
                 />
                 <lucide-icon 
                     [name]="hidden2 ? 'eye' : 'eye-closed'"
                     class="absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
                     (click)="togglePassword2()"
                 />
-                @if (passwordsMatch()) {
-                    <lucide-icon name="check" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
-                }
+                <lucide-icon name="check" [hidden]="!passwordsMatch()" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
             </div>
             <app-inline-error [control]="confirmControl"></app-inline-error>
         </div>
 
         <button 
-            type="submit" 
-            class="bg-blue-500 w-full my-4 px-3 py-2 rounded-2xl text-slate-100 transition-colors hover:bg-blue-600" 
-            [disabled]="signUpForm.invalid || !matchAll(passwordControl.value) || !passwordsMatch()"
+            class="bg-blue-500 w-full my-4 px-3 py-2 rounded-2xl text-slate-100 transition-colors hover:bg-blue-600 focus:outline-sky-500" 
+            type="submit"
         >
             Create Account
         </button>
     </form>
-    <a class="text-blue-500 text-center transition-colors hover:text-blue-600" routerLink="/login">
+    <a class="text-blue-500 text-center transition-colors hover:text-blue-600 focus:outline-sky-500" routerLink="/login">
         Already have an account? <br class="md:hidden">Sign in!
     </a>
-
-    <ng-template #requirements>
-        <ng-container *ngIf="passwordControl.value.length >= 6; else tooShort">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req1 }}</p>
-        </ng-container>
-        <ng-template #tooShort>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req1 }}</p>
-        </ng-template>
-        <ng-container *ngIf="matchUpper(passwordControl.value); else noUpper">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req2 }}</p>
-        </ng-container>
-        <ng-template #noUpper>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req2 }}</p>
-        </ng-template>
-        <ng-container *ngIf="matchLower(passwordControl.value); else noLower">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req3 }}</p>
-        </ng-container>
-        <ng-template #noLower>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req3 }}</p>
-        </ng-template>
-        <ng-container *ngIf="matchNum(passwordControl.value); else noNum">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req4 }}</p>
-        </ng-container>
-        <ng-template #noNum>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req4 }}</p>
-        </ng-template>
-        <ng-container *ngIf="matchSpecial(passwordControl.value); else noSpecial">
-            <p class="text-success req"><i class="bi bi-check2"></i> {{ req5 }}</p>
-        </ng-container>
-        <ng-template #noSpecial>
-            <p class="text-danger req"><i class="bi bi-x"></i> {{ req5 }}</p>
-        </ng-template>
-    </ng-template>
 </div>

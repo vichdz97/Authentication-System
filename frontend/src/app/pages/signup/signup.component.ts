@@ -65,7 +65,7 @@ export class SignupComponent implements OnInit {
         let pwd: string = this.passwordControl.value;
         if (this.accountExists(uname, pwd)) {
             this.successMessage = "";
-            this.alertMessage = "Sorry! This account already exists."
+            this.alertMessage = "This account already exists."
         }
         else {
             this.alertMessage = "";
@@ -76,13 +76,7 @@ export class SignupComponent implements OnInit {
     }
 
     accountExists(uname: string, pwd: string) {
-        let exists = false;
-        this.users.forEach(user => {
-            if (uname === user.username && pwd === user.password) {
-                exists = true;
-            }
-        });
-        return exists;
+        return this.users.some(user => user.username.match(uname) && user.password.match(pwd));
     }
 
     createAccount(uname: string, pwd: string) {
