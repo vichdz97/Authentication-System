@@ -22,7 +22,7 @@ import { DeleteComponent } from './modals/delete/delete.component';
 import { AuthGuard } from './guards/auth.guard';
 import { LoadingComponent } from './modals/loading/loading.component';
 import { UpdateComponent } from './modals/update/update.component';
-import { LucideAngularModule, Eye, EyeClosed, Check } from 'lucide-angular';
+import { LucideAngularModule, Eye, EyeClosed, Check, X, CircleAlert, Search, SquarePen, Trash2, Plus, CircleCheck, ShieldUser } from 'lucide-angular';
 
 @NgModule({ 
     declarations: [
@@ -47,7 +47,7 @@ import { LucideAngularModule, Eye, EyeClosed, Check } from 'lucide-angular';
         RouterModule,
         ReactiveFormsModule,
         FormsModule,
-        LucideAngularModule.pick({Eye, EyeClosed, Check})
+        LucideAngularModule.pick({Eye, EyeClosed, Check, X, CircleAlert, Search, SquarePen, Trash2, Plus, CircleCheck, ShieldUser})
     ], 
     providers: [
         UserService, 
