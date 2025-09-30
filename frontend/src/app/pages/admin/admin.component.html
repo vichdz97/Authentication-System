@@ -1,83 +1,196 @@
 <app-navbar [user]="currentUser"></app-navbar>
+<div class="flex flex-col items-center gap-4 mt-[15vh]">
+    <h2 class="w-screen text-center text-slate-100 text-3xl font-bold">User Data</h2>
 
-<div class="d-flex flex-column align-items-center">
-    <h1 class="text-center mt-4">Welcome Administrator</h1>
-    <div class="my-2">
-        <button type="button" class="btn btn-primary mx-1" (click)="displayUserForm()">Add User</button>
-        <button type="button" class="btn btn-secondary mx-1" (click)="displaySearch()">Search User</button>
+    <div class="relative">
+        <lucide-icon name="search" class="absolute top-0 m-1 text-slate-400" />
+        <input 
+            class="w-full pl-10 py-2 pr-6 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500"
+            type="text" 
+            placeholder="Search User"
+            [(ngModel)]="searchText" 
+            (ngModelChange)="searchUser()"
+        />
+        <lucide-icon 
+            name="x" 
+            class="w-[0.85em] absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
+            (click)="clearSearch()"
+            [hidden]="!searchText"
+        />
     </div>
-    <p class="text-success text-center mt-2 mb-0" [hidden]="userForm.dirty || userForm.touched">{{ successMessage }}</p>
+
+    <div class="p-2 flex items-center justify-center gap-2 text-slate-100 bg-green-600 rounded-2xl" [hidden]="!successMessage">
+        <lucide-icon name="circle-check" />
+        <p>{{ successMessage }}</p>
+    </div>
+
+    <div class="p-2 flex items-center justify-center gap-2 text-slate-100 bg-red-600 rounded-2xl" [hidden]="!errorMessage">
+        <lucide-icon name="circle-alert" />
+        <p>{{ errorMessage }}</p>
+    </div>
     
-    <form [formGroup]="userForm" (ngSubmit)="addUser()" [hidden]="!showUserForm">
-        <p class="text-danger text-center mt-2 mb-0" [hidden]="userForm.dirty || userForm.touched">{{ errorMessage }}</p>
-        
-        <label for="uname" class="form-label mt-2 mb-1">Username<span class="text-danger"> *</span></label>
-        <input type="text" id="uname" class="form-control" formControlName="username" placeholder="Username" required>
+    <form 
+        class="w-full px-6 md:w-1/3 md:px-0 flex flex-col gap-2"
+        [formGroup]="userForm" 
+        (ngSubmit)="addUser()" [hidden]="!showUserForm"
+    >
+        <input 
+            class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500"
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            placeholder="Username" 
+            required
+        />
+        <input 
+            class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500"
+            type="text" 
+            id="password" 
+            formControlName="password" 
+            placeholder="Password" 
+            required
+        />
+        <div>
+            <label for="roles" class="text-sm text-slate-100">Select a role:</label>
+            <select 
+                class="w-full px-3 py-2 bg-slate-100 tetx-s rounded-2xl focus:outline-sky-500"
+                id="roles" 
+                formControlName="role"
+                required
+            >
+                <option value="">Select a role:</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Manager">Manager</option>
+                <option value="User">User</option>
+            </select>
+        </div>
 
-        <label for="pwd" class="form-label mt-2 mb-1">Password<span class="text-danger"> *</span></label>
-        <input type="text" id="pwd" class="form-control" formControlName="password" placeholder="Password" required>
-
-        <label for="role" class="form-label mt-2 mb-1">Role<span class="text-danger"> *</span></label>
-        <select name="selectRoles" id="role" class="form-control" formControlName="role" required>
-            <option value="">Select a Role:</option>
-            <option value="Administrator">Administrator</option>
-            <option value="Manager">Manager</option>
-            <option value="User">User</option>
-        </select>
-        <button type="submit" class="btn btn-success w-100 my-3" [disabled]="userForm.invalid">Submit</button>
+        <div class="w-full flex gap-2 ">
+            <button class="grow-1 px-3 py-2 mt-4 rounded-2xl bg-slate-500 text-slate-100 transition-colors hover:bg-slate-600" (click)="displayUserForm()">Cancel</button>
+            <button type="submit" class="grow-1 px-3 py-2 mt-4 rounded-2xl bg-blue-500 text-slate-100 transition-colors hover:bg-blue-600" [disabled]="userForm.invalid">Submit</button>
+        </div>
     </form>
 
-    <div *ngIf="showSearch" class="d-flex my-2">
-        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()" placeholder="Search">
-        <button class="btn btn-secondary" (click)="clearSearch()" [disabled]="!searchText">Clear</button>
+    <div class="w-full p-4 grid md:grid-cols-4 gap-4">
+        @if (filteredUsers && searchText) {
+            @for (user of filteredUsers; track user.id) {
+                <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/50 backdrop-blur-sm rounded-lg">
+                    <p class="font-bold">{{ user.username }}</p>
+                    <p class="opacity-50">ID: {{ user.id }}</p>
+                    @switch (user.role) {
+                        @case ("Administrator") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @case ("Manager") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @case ("User") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @default {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
+                        }
+                    }
+                    <p>{{ user.role }}</p>
+                    <div class="flex items-center justify-center gap-2">
+                        @if (user.hiddenPwd) {
+                            <p>
+                                @for (char of user.password; let i = $index; track i) {
+                                    <span>&bull;</span>
+                                }
+                            </p>
+                        }
+                        @else {
+                            <p>{{ user.password || "Unknown" }}</p>
+                        }
+                        <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
+                    </div>
+                    <div class="mt-2 flex gap-2">
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500" 
+                            title="Update {{ user.username }}'s account"
+                            (click)="updateUser(user)"
+                        >
+                            <lucide-icon name="square-pen" />
+                        </button>
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500" 
+                            title="Delete {{ user.username }}'s account"
+                            (click)="deleteUser(user.id)"
+                        >
+                            <lucide-icon name="trash-2" />
+                        </button>
+                    </div>
+                </div>
+            }
+            @empty {
+                <h6 class="col-span-4 text-center text-slate-100 text-lg">No results</h6>
+            }
+        }
+        @else {
+            <div class="p-4 flex flex-col items-center justify-center gap-2 text-slate-900 bg-slate-100/30 backdrop-blur-sm rounded-lg">
+                <p class="font-bold">Add new user</p>
+                <button 
+                    class="p-2 rounded-full text-slate-100 bg-blue-500 transition-colors hover:bg-blue-600" 
+                    title="Add new user"
+                    (click)="displayUserForm()"
+                >
+                    <lucide-icon name="plus" />
+                </button>
+            </div>
+            @for (user of allUsers; track user.id) {
+                <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/30 backdrop-blur-sm rounded-lg">
+                    <p class="font-bold">{{ user.username || "Unknown" }}</p>
+                    <p class="opacity-50">ID: {{ user.id }}</p>
+                    @switch (user.role) {
+                        @case ("Administrator") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @case ("Manager") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @case ("User") {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
+                        }
+                        @default {
+                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
+                        }
+                    }
+                    <p>{{ user.role || "Unknown" }}</p>
+                    <div class="flex items-center justify-center gap-2">
+                        @if (user.hiddenPwd) {
+                            <p>
+                                @for (char of user.password; let i = $index; track i) {
+                                    <span>&bull;</span>
+                                }
+                            </p>
+                        }
+                        @else {
+                            <p>{{ user.password || "Unknown" }}</p>
+                        }
+                        <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
+                    </div>
+                    <div class="mt-2 flex gap-2">
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500" 
+                            title="Update {{ user.username }}'s account"
+                            (click)="updateUser(user)"
+                        >
+                            <lucide-icon name="square-pen" />
+                        </button>
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500" 
+                            title="Delete {{ user.username }}'s account"
+                            (click)="deleteUser(user.id)"
+                        >
+                            <lucide-icon name="trash-2" />
+                        </button>
+                    </div>
+                </div>
+            } @empty {
+                <h6 class="col-span-4 text-center text-slate-100 text-lg">There are no users.</h6>
+            }
+        }
     </div>
 
-    <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>
-    <ng-container *ngIf="filteredUsers && searchText != ''; else default">
-        <h6 class="m-4 text-danger" [hidden]="filteredUsers">No results</h6>
-        <div *ngFor="let user of filteredUsers" class="userInfo bg-info m-4 p-4 box shadow">
-            <div class="row align-items-center">
-                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
-                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                </div>
-                <div class="col-md-3 col-lg-3 credentials-container">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Password:</strong> {{ user.password }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3 role-container">
-                    <p><strong>Role:</strong> {{ user.role }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3">
-                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn">Update</button></div>
-                    <div><button type="button" class="btn btn-danger w-100">Delete</button></div>
-                </div>
-            </div>
-        </div>
-    </ng-container>
-    <ng-template #default>
-        <div *ngFor="let user of allUsers" class="userInfo bg-info m-4 p-4 box shadow">
-            <div class="row align-items-center">
-                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
-                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                </div>
-                <div class="col-md-3 col-lg-3 credentials-container">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Password:</strong> {{ user.password }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3 role-container">
-                    <p><strong>Role:</strong> {{ user.role }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3">
-                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn">Update</button></div>
-                    <div><button type="button" class="btn btn-danger w-100">Delete</button></div>
-                </div>
-            </div>
-        </div>
-    </ng-template>
 </div>

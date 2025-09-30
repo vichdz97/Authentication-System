@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
@@ -25,12 +25,11 @@ export class AdminComponent implements OnInit {
         role: ['', [Validators.required]],
     });
 
-    showSearch: boolean = false;
     searchText!: string;
     filteredUsers: any;
 
     constructor(
-        private fb: UntypedFormBuilder,
+        private fb: FormBuilder,
         private userService: UserService,
         private router: Router,
         private titleService: Title
@@ -47,47 +46,38 @@ export class AdminComponent implements OnInit {
         this.currentUser = this.userService.currentUser;
     }
 
-    get usernameControl(): UntypedFormControl {
-        return this.userForm.get('username') as UntypedFormControl;
+    get usernameControl(): FormControl {
+        return this.userForm.get('username') as FormControl;
     }
 
-    get passwordControl(): UntypedFormControl {
-        return this.userForm.get('password') as UntypedFormControl;
+    get passwordControl(): FormControl {
+        return this.userForm.get('password') as FormControl;
     }
 
-    get roleControl(): UntypedFormControl {
-        return this.userForm.get('role') as UntypedFormControl;
+    get roleControl(): FormControl {
+        return this.userForm.get('role') as FormControl;
     }
 
-    displayUserForm() {
+    displayUserForm(): void {
         this.showUserForm = !this.showUserForm;
         this.errorMessage = '';
         this.successMessage = '';
         this.searchText = '';
         this.userForm.reset();
-        this.showSearch = false;
     }
 
-    displaySearch() {
-        this.showSearch = !this.showSearch;
-        this.searchText = '';
-        this.errorMessage = '';
-        this.successMessage = '';
-        this.showUserForm = false;
-    }
-
-    addUser() {
+    addUser(): void {
         let uname: string = this.usernameControl.value;
         let pwd: string = this.passwordControl.value;
-        let _role: string = this.roleControl.value;
+        let role: string = this.roleControl.value;
 
-        if (this.accountExists(uname, pwd, _role)) {
+        if (this.accountExists(uname, pwd, role)) {
             this.errorMessage = "This account already exists!";
             this.successMessage = '';
             this.userForm.reset();
         }
         else if (this.userWordExists(uname, pwd)) {
-            this.errorMessage = "This username and password already exists!";
+            this.errorMessage = "These credentials already exists!";
             this.successMessage = '';
             this.userForm.reset();
         }
@@ -95,7 +85,8 @@ export class AdminComponent implements OnInit {
             let newUser: User = <User> {
                 username: uname,
                 password: pwd,
-                role: _role
+                role,
+                hiddenPwd: true
             };
     
             this.userService.createUser(newUser).subscribe({
@@ -111,26 +102,14 @@ export class AdminComponent implements OnInit {
     }
 
     accountExists(uname: string, pwd: string, role: string): boolean {
-        let exists = false;
-        this.allUsers.forEach(user => {
-            if (uname === user.username && pwd === user.password && role === user.role) {
-                exists = true;
-            }
-        });
-        return exists;
+        return this.allUsers.some(user => user.username.match(uname) && user.password.match(pwd) && user.role.match(role));
     }
 
     userWordExists(uname: string, pwd: string): boolean {
-        let exists = false;
-        this.allUsers.forEach(user => {
-            if (uname === user.username && pwd === user.password) {
-                exists = true;
-            }
-        });
-        return exists;
+        return this.allUsers.some(user => user.username.match(uname) && user.password.match(pwd));
     }
 
-    deleteUser(id: number) {
+    deleteUser(id: number): void {
         this.userService.deleteUser(id).subscribe({
             next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
             error: err => console.error("ERROR - Could not delete user"),
@@ -138,7 +117,7 @@ export class AdminComponent implements OnInit {
         });
     }
 
-    updateUser(updatedUser: User) {
+    updateUser(updatedUser: User): void {
         if (updatedUser.id === this.currentUser?.id) {
             this.userService.updateCurrentUser(updatedUser).subscribe({
                 next: res => this.ngOnInit(),
@@ -155,25 +134,26 @@ export class AdminComponent implements OnInit {
         }
     }
 
-    searchUser() {
-        this.filteredUsers = this.allUsers.map(user => {
-            let id = user.id.toString();
-            let username = user.username.toLowerCase();
-            let password = user.password.toLowerCase();
-            let role = user.role.toLowerCase();
-            let searchText = this.searchText.toLowerCase();
-            if (id.includes(searchText) ||
-                username.includes(searchText) || 
-                password.includes(searchText) || 
-                role.includes(searchText)) {
-                return user;
-            }
-            return null; 
-        }).filter(user => user);
+    searchUser(): boolean | User[] {
+        if (this.searchText) {
+            this.filteredUsers = this.allUsers.filter(user => {
+                const id = user.id.toString();
+                const username = user.username.toLowerCase();
+                const password = user.password.toLowerCase();
+                const role = user.role.toLowerCase();
+                const searchText = this.searchText.toLowerCase();
+                return id.includes(searchText) || username.includes(searchText) || password.includes(searchText) || role.includes(searchText);
+            });
+        }
+        return this.allUsers;
     }
 
-    clearSearch() {
+    clearSearch(): void {
         this.searchText = '';
+    }
+
+    togglePassword(user: User): void {
+        user.hiddenPwd = !user.hiddenPwd;
     }
 
 }
