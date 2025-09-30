@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
     users!: User[];
     userID: number = 0;
     invalidMsg: string = '';
+    hidden: boolean = true;
 
     loginForm = this.fb.group({
         username: ['', [Validators.required]],
@@ -91,6 +92,14 @@ export class LoginComponent implements OnInit {
                 complete: () => console.log("User loaded")
             });
         }
+    }
+
+    hasErrors(control: FormControl) {
+        return control.invalid && (control.dirty || control.touched);
+    }
+
+    togglePassword() {
+        this.hidden = !this.hidden;
     }
 
 }
