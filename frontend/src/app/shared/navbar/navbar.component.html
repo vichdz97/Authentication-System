@@ -9,7 +9,7 @@
             @if (user) {
                 <li>Welcome, {{ user.username }}!</li>
                 <li class="transition-all hover:opacity-80">
-                    <a class="hover:cursor-default focus:outline-sky-500" routerLink="/login">Logout</a>
+                    <a class="hover:cursor-default focus:outline-sky-500" (click)="logout()">Logout</a>
                 </li>
             }
             @else {
