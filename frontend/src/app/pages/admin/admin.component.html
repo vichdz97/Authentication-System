@@ -72,62 +72,7 @@
     </form>
 
     <div class="w-full p-4 grid md:grid-cols-4 gap-4">
-        @if (filteredUsers && searchText) {
-            @for (user of filteredUsers; track user.id) {
-                <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/50 backdrop-blur-sm rounded-lg">
-                    <p class="font-bold">{{ user.username }}</p>
-                    <p class="opacity-50">ID: {{ user.id }}</p>
-                    @switch (user.role) {
-                        @case ("Administrator") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @case ("Manager") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @case ("User") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @default {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
-                        }
-                    }
-                    <div class="flex items-center justify-center gap-2">
-                        @if (user.hiddenPwd) {
-                            <p>
-                                @for (char of user.password; let i = $index; track i) {
-                                    <span>&bull;</span>
-                                }
-                            </p>
-                        }
-                        @else {
-                            <p>{{ user.password || "Unknown" }}</p>
-                        }
-                        <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
-                    </div>
-                    <p>{{ user.role }}</p>
-                    <div class="mt-2 flex gap-2">
-                        <button 
-                            class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500 focus:outline-sky-500" 
-                            title="Update {{ user.username }}'s account"
-                            (click)="updateUser(user)"
-                        >
-                            <lucide-icon name="square-pen" />
-                        </button>
-                        <button 
-                            class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500 focus:outline-sky-500" 
-                            title="Delete {{ user.username }}'s account"
-                            (click)="deleteUser(user.id)"
-                        >
-                            <lucide-icon name="trash-2" />
-                        </button>
-                    </div>
-                </div>
-            }
-            @empty {
-                <h6 class="col-span-4 text-center text-slate-100 text-lg">No results</h6>
-            }
-        }
-        @else {
+        @if (!searchText) {
             <div class="p-4 flex flex-col items-center justify-center gap-2 text-slate-900 bg-slate-100/30 backdrop-blur-sm rounded-lg">
                 <p class="font-bold">Create new account</p>
                 <button 
@@ -138,59 +83,59 @@
                     <lucide-icon name="plus" />
                 </button>
             </div>
-            @for (user of allUsers; track user.id) {
-                <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/30 backdrop-blur-sm rounded-lg">
-                    <p class="font-bold">{{ user.username || "Unknown" }}</p>
-                    <p class="opacity-50">ID: {{ user.id }}</p>
-                    @switch (user.role) {
-                        @case ("Administrator") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @case ("Manager") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @case ("User") {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
-                        }
-                        @default {
-                            <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
-                        }
+        }
+        @for (user of (searchText ? filteredUsers : allUsers); track user.id) {
+            <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/50 backdrop-blur-sm rounded-lg">
+                <p class="font-bold">{{ user.username }}</p>
+                <p class="opacity-50">ID: {{ user.id }}</p>
+                @switch (user.role) {
+                    @case ("Administrator") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
                     }
-                    <div class="flex items-center justify-center gap-2">
-                        @if (user.hiddenPwd) {
-                            <p>
-                                @for (char of user.password; let i = $index; track i) {
-                                    <span>&bull;</span>
-                                }
-                            </p>
-                        }
-                        @else {
-                            <p>{{ user.password || "Unknown" }}</p>
-                        }
-                        <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
-                    </div>
-                    <p class="font-bold">{{ user.role || "Unknown" }}</p>
-                    <div class="mt-2 flex gap-2">
-                        <button 
-                            class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500 focus:outline-sky-500" 
-                            title="Update {{ user.username }}'s account"
-                            (click)="updateUser(user)"
-                        >
-                            <lucide-icon name="square-pen" />
-                        </button>
-                        <button 
-                            class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500 focus:outline-sky-500" 
-                            title="Delete {{ user.username }}'s account"
-                            (click)="deleteUser(user.id)"
-                        >
-                            <lucide-icon name="trash-2" />
-                        </button>
-                    </div>
+                    @case ("Manager") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
+                    }
+                    @case ("User") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
+                    }
+                    @default {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
+                    }
+                }
+                <div class="flex items-center justify-center gap-2">
+                    @if (user.hiddenPwd) {
+                        <p>
+                            @for (char of user.password; let i = $index; track i) {
+                                <span>&bull;</span>
+                            }
+                        </p>
+                    }
+                    @else {
+                        <p>{{ user.password || "Unknown" }}</p>
+                    }
+                    <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
                 </div>
-            } @empty {
-                <h6 class="col-span-4 text-center text-slate-100 text-lg">There are no users.</h6>
-            }
+                <p>{{ user.role }}</p>
+                <div class="mt-2 flex gap-2">
+                    <button 
+                        class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500 focus:outline-sky-500" 
+                        title="Update {{ user.username }}'s account"
+                        (click)="updateUser(user)"
+                    >
+                        <lucide-icon name="square-pen" />
+                    </button>
+                    <button 
+                        class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500 focus:outline-sky-500" 
+                        title="Delete {{ user.username }}'s account"
+                        (click)="deleteUser(user.id)"
+                    >
+                        <lucide-icon name="trash-2" />
+                    </button>
+                </div>
+            </div>
+        }
+        @empty {
+            <h6 class="col-span-4 text-center text-slate-100 text-lg">No results</h6>
         }
     </div>
-
 </div>
