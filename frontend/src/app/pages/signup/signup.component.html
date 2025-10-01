@@ -89,8 +89,10 @@
         </div>
 
         <button 
-            class="bg-blue-500 w-full my-4 px-3 py-2 rounded-2xl text-slate-100 transition-colors hover:bg-blue-600 focus:outline-sky-500" 
+            class="w-full my-4 px-3 py-2 rounded-2xl text-slate-100 transition-colors 
+                {{ signUpForm.valid && matchAll(passwordControl.value) && passwordsMatch() ? 'bg-blue-500 hover:bg-blue-600 focus:outline-sky-500' : 'bg-blue-400'}}" 
             type="submit"
+            [disabled]="!signUpForm.valid || !matchAll(passwordControl.value) || !passwordsMatch()"
         >
             Create Account
         </button>
