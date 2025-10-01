@@ -5,11 +5,14 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { UserService } from './services/user.service';
+import { AuthGuard } from './guards/auth.guard';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
-import { UserService } from './services/user.service';
 import { AdminComponent } from './pages/admin/admin.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { ManagerComponent } from './pages/manager/manager.component';
@@ -19,10 +22,24 @@ import { ErrorComponent } from './pages/error/error.component';
 import { InlineErrorComponent } from './shared/inline-error/inline-error.component';
 import { LogoutComponent } from './modals/logout/logout.component';
 import { DeleteComponent } from './modals/delete/delete.component';
-import { AuthGuard } from './guards/auth.guard';
 import { LoadingComponent } from './modals/loading/loading.component';
 import { UpdateComponent } from './modals/update/update.component';
-import { LucideAngularModule, Eye, EyeClosed, Check, X, CircleAlert, Search, SquarePen, Trash2, Plus, CircleCheck, ShieldUser } from 'lucide-angular';
+import { SnackbarMessageComponent } from './shared/snackbar-message/snackbar-message.component';
+
+import { 
+    LucideAngularModule, 
+    Eye, 
+    EyeClosed, 
+    Check, 
+    X, 
+    CircleAlert, 
+    Search, 
+    SquarePen, 
+    Trash2, 
+    Plus, 
+    CircleCheck, 
+    ShieldUser 
+} from 'lucide-angular';
 
 @NgModule({ 
     declarations: [
@@ -38,7 +55,8 @@ import { LucideAngularModule, Eye, EyeClosed, Check, X, CircleAlert, Search, Squ
         LogoutComponent,
         DeleteComponent,
         LoadingComponent,
-        UpdateComponent
+        UpdateComponent,
+        SnackbarMessageComponent
     ],
     bootstrap: [AppComponent], 
     imports: [
@@ -47,6 +65,7 @@ import { LucideAngularModule, Eye, EyeClosed, Check, X, CircleAlert, Search, Squ
         RouterModule,
         ReactiveFormsModule,
         FormsModule,
+        MatSnackBarModule,
         LucideAngularModule.pick({Eye, EyeClosed, Check, X, CircleAlert, Search, SquarePen, Trash2, Plus, CircleCheck, ShieldUser})
     ], 
     providers: [
