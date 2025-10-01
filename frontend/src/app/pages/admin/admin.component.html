@@ -90,7 +90,6 @@
                             <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
                         }
                     }
-                    <p>{{ user.role }}</p>
                     <div class="flex items-center justify-center gap-2">
                         @if (user.hiddenPwd) {
                             <p>
@@ -104,6 +103,7 @@
                         }
                         <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
                     </div>
+                    <p>{{ user.role }}</p>
                     <div class="mt-2 flex gap-2">
                         <button 
                             class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500" 
@@ -155,7 +155,6 @@
                             <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
                         }
                     }
-                    <p>{{ user.role || "Unknown" }}</p>
                     <div class="flex items-center justify-center gap-2">
                         @if (user.hiddenPwd) {
                             <p>
@@ -169,6 +168,7 @@
                         }
                         <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
                     </div>
+                    <p class="font-bold">{{ user.role || "Unknown" }}</p>
                     <div class="mt-2 flex gap-2">
                         <button 
                             class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500" 
