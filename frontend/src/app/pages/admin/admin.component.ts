@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
 
 @Component({
     selector: 'app-admin',
@@ -17,8 +19,6 @@ export class AdminComponent implements OnInit {
     currentUser?: User;
 
     showUserForm: boolean = false;  
-    errorMessage?: string;
-    successMessage?: string;
     userForm = this.fb.group({
         username: ['', [Validators.required]],
         password: ['', [Validators.required]],
@@ -32,7 +32,8 @@ export class AdminComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private router: Router,
-        private titleService: Title
+        private titleService: Title,
+        private snackBar: MatSnackBar
     ) { 
         this.titleService.setTitle("Authentication System | Administrator");
     }
@@ -60,9 +61,6 @@ export class AdminComponent implements OnInit {
 
     displayUserForm(): void {
         this.showUserForm = !this.showUserForm;
-        this.errorMessage = '';
-        this.successMessage = '';
-        this.searchText = '';
         this.userForm.reset();
     }
 
@@ -71,15 +69,8 @@ export class AdminComponent implements OnInit {
         let pwd: string = this.passwordControl.value;
         let role: string = this.roleControl.value;
 
-        if (this.accountExists(uname, pwd, role)) {
-            this.errorMessage = "This account already exists!";
-            this.successMessage = '';
-            this.userForm.reset();
-        }
-        else if (this.userWordExists(uname, pwd)) {
-            this.errorMessage = "These credentials already exists!";
-            this.successMessage = '';
-            this.userForm.reset();
+        if (this.accountExists(uname, pwd, role) || this.userWordExists(uname, pwd)) {
+            this.openSnackBar("These credentials already exists!", "circle-alert", "red");
         }
         else {
             let newUser: User = <User> {
@@ -91,9 +82,9 @@ export class AdminComponent implements OnInit {
     
             this.userService.createUser(newUser).subscribe({
                 next: res => {
+                    this.openSnackBar("Account successfully created!", "circle-check", "green");
                     this.displayUserForm();
                     this.ngOnInit();
-                    this.successMessage = "User successfully added!";
                 },
                 error: err => console.error("ERROR - Unable to create user"),
                 complete: () => console.log("SUCCESS - New user created")
@@ -111,7 +102,16 @@ export class AdminComponent implements OnInit {
 
     deleteUser(id: number): void {
         this.userService.deleteUser(id).subscribe({
-            next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
+            next: res => {
+                if (id === this.currentUser?.id) {
+                    this.router.navigateByUrl('error');
+                }
+                else {
+                    this.ngOnInit();
+                    this.allUsers = this.allUsers.filter(user => user.id !== id);
+                    this.searchUser();
+                }
+            },
             error: err => console.error("ERROR - Could not delete user"),
             complete: () => console.log("SUCCESS - User deleted")
         });
@@ -154,6 +154,14 @@ export class AdminComponent implements OnInit {
 
     togglePassword(user: User): void {
         user.hiddenPwd = !user.hiddenPwd;
+    }
+
+    openSnackBar(message: string, icon: string, color: string) {
+        this.snackBar.openFromComponent(SnackbarMessageComponent, {
+            data: [icon, message],
+            duration: 5000, // clears after 5 secs
+            panelClass: [`bg-${color}-600`, 'text-slate-100'] // custom classes
+        });
     }
 
 }
