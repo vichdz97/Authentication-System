@@ -38,7 +38,8 @@ import {
     Trash2, 
     Plus, 
     CircleCheck, 
-    ShieldUser 
+    ShieldUser,
+    ShieldAlert
 } from 'lucide-angular';
 
 @NgModule({ 
@@ -66,7 +67,20 @@ import {
         ReactiveFormsModule,
         FormsModule,
         MatSnackBarModule,
-        LucideAngularModule.pick({Eye, EyeClosed, Check, X, CircleAlert, Search, SquarePen, Trash2, Plus, CircleCheck, ShieldUser})
+        LucideAngularModule.pick({
+            Eye, 
+            EyeClosed, 
+            Check, 
+            X, 
+            CircleAlert, 
+            Search, 
+            SquarePen, 
+            Trash2, 
+            Plus,
+            CircleCheck, 
+            ShieldUser,
+            ShieldAlert
+        })
     ], 
     providers: [
         UserService, 
