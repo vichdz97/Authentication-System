@@ -1,59 +1,81 @@
 <app-navbar [user]="currentUser"></app-navbar>
+<div class="flex flex-col items-center gap-4 mt-[15vh]">
+    <h2 class="w-screen text-center text-slate-100 text-3xl font-bold">Account Data</h2>
 
-<div class="d-flex flex-column align-items-center">
-    <h1 class="text-center mt-4">Welcome Manager</h1>
-
-    <div class="d-flex my-2">
-        <input type="text" class="form-control" [(ngModel)]="searchText" (ngModelChange)="searchUser()" placeholder="Search">
-        <button class="btn btn-secondary" (click)="clearSearch()" [disabled]="!searchText">Clear</button>
+    <div class="relative">
+        <lucide-icon name="search" class="absolute top-0 m-1 text-slate-400" />
+        <input 
+            class="w-full pl-10 py-2 pr-6 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500"
+            type="text" 
+            placeholder="Search Account"
+            [(ngModel)]="searchText" 
+            (ngModelChange)="searchUser()"
+        />
+        <lucide-icon 
+            name="x" 
+            class="w-[0.85em] absolute top-0 right-0 m-1 text-slate-400 transition-colors hover:text-slate-500" 
+            (click)="clearSearch()"
+            [hidden]="!searchText"
+        />
     </div>
 
-    <h5 class="text-center mt-3 mb-0"><em>Authentication System User Data</em></h5>
-    <ng-container *ngIf="filteredUsers && searchText != ''; else default">
-        <h6 class="m-4 text-danger" [hidden]="filteredUsers">No results</h6>
-        <div *ngFor="let user of filteredUsers" class="userInfo bg-info m-4 p-4 box shadow">
-            <div class="row align-items-center">
-                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
-                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                </div>
-                <div class="col-md-3 col-lg-3 credentials-container">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Password:</strong> {{ user.password }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3 role-container">
-                    <p><strong>Role:</strong> {{ user.role }}</p>
-                </div>
-                <div *ngIf="user.id === currentUser?.id || user.role === 'User'" class="col-md-3 col-lg-3">
-                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn">Update</button></div>
-                    <div><button type="button" class="btn btn-danger w-100">Delete</button></div>
-                </div>
+    <div class="w-full p-4 grid md:grid-cols-4 gap-4">
+        @for (user of (searchText ? filteredUsers : allUsers); track user.id) {
+            <div class="p-4 flex flex-col items-center justify-center gap-1 text-slate-900 bg-slate-100/50 backdrop-blur-sm rounded-lg">
+                <p class="font-bold">{{ user.username }}</p>
+                <p class="opacity-50">ID: {{ user.id }}</p>
+                @switch (user.role) {
+                    @case ("Administrator") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-red-500 rounded-full" size="50" strokeWidth="1" />
+                    }
+                    @case ("Manager") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-amber-500 rounded-full" size="50" strokeWidth="1" />
+                    }
+                    @case ("User") {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-blue-500 rounded-full" size="50" strokeWidth="1" />
+                    }
+                    @default {
+                        <lucide-icon name="shield-user" class="p-1 text-slate-100 bg-slate-900 rounded-full" size="50" strokeWidth="1" />
+                    }
+                }
+                @if (user.id === currentUser?.id || user.role.match("User")) {
+                    <div class="flex items-center justify-center gap-2">
+                        @if (user.hiddenPwd) {
+                            <p>
+                                @for (char of user.password; let i = $index; track i) {
+                                    <span>&bull;</span>
+                                }
+                            </p>
+                        }
+                        @else {
+                            <p>{{ user.password || "Unknown" }}</p>
+                        }
+                        <lucide-icon [name]="user.hiddenPwd ? 'eye' : 'eye-closed'" [title]="user.hiddenPwd ? 'Show Password' : 'Hide Password'" (click)="togglePassword(user)" />
+                    </div>
+                }
+                <p>{{ user.role }}</p>
+                @if (user.id === currentUser?.id || user.role.match("User")) {
+                    <div class="mt-2 flex gap-2">
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-sky-500/70 transition-colors hover:bg-sky-500 focus:outline-sky-500" 
+                            title="Update {{ user.username }}'s account"
+                            (click)="updateUser(user)"
+                        >
+                            <lucide-icon name="square-pen" />
+                        </button>
+                        <button 
+                            class="p-2 rounded-full text-slate-100 bg-red-500/70 transition-colors hover:bg-red-500 focus:outline-sky-500" 
+                            title="Delete {{ user.username }}'s account"
+                            (click)="deleteUser(user.id)"
+                        >
+                            <lucide-icon name="trash-2" />
+                        </button>
+                    </div>
+                }
             </div>
-        </div>
-    </ng-container>
-    <ng-template #default>
-        <div *ngFor="let user of allUsers" class="userInfo bg-info m-4 p-4 box shadow">
-            <div class="row align-items-center">
-                <div class="col-md-3 col-lg-3 img-container" [ngSwitch]="user.role">
-                    <img *ngSwitchCase="'Administrator'" src="assets/shield-red.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'Manager'" src="assets/shield-yellow.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                    <img *ngSwitchCase="'User'" src="assets/shield-blue.png" width="100" height="100" alt="Profile picture" class="box bg-light">
-                </div>
-                <div class="col-md-3 col-lg-3 credentials-container">
-                    <p><strong>ID:</strong> {{ user.id }}</p>
-                    <p><strong>Username:</strong> {{ user.username }}</p>
-                    <p><strong>Password:</strong> {{ user.password }}</p>
-                </div>
-                <div class="col-md-3 col-lg-3 role-container">
-                    <p><strong>Role:</strong> {{ user.role }}</p>
-                </div>
-                <div *ngIf="user.id === currentUser?.id || user.role === 'User'" class="col-md-3 col-lg-3">
-                    <div><button type="button" class="btn btn-warning w-100" id="updateBtn">Update</button></div>
-                    <div><button type="button" class="btn btn-danger w-100">Delete</button></div>
-                </div>
-            </div>
-        </div>
-    </ng-template>
+        }
+        @empty {
+            <h6 class="col-span-4 text-center text-slate-100 text-lg">No results</h6>
+        }
+    </div>
 </div>

@@ -35,15 +35,24 @@ export class ManagerComponent implements OnInit {
         this.currentUser = this.userService.currentUser;
     }
 
-    deleteUser(id: number) {
+    deleteUser(id: number): void {
         this.userService.deleteUser(id).subscribe({
-            next: res => id === this.currentUser?.id ? this.router.navigateByUrl('/error') : this.ngOnInit(),
+            next: res => {
+                if (id === this.currentUser?.id) {
+                    this.router.navigateByUrl('error');
+                }
+                else {
+                    this.ngOnInit();
+                    this.allUsers = this.allUsers.filter(user => user.id !== id);
+                    this.searchUser();
+                }
+            },
             error: err => console.error("ERROR - Could not delete user"),
             complete: () => console.log("SUCCESS - User deleted")
         });
     }
 
-    updateUser(updatedUser: User) {
+    updateUser(updatedUser: User): void {
         this.userService.updateCurrentUser(updatedUser).subscribe({
             next: res => this.ngOnInit(),
             error: err => console.error("ERROR - Could not update user"),
@@ -51,25 +60,26 @@ export class ManagerComponent implements OnInit {
         });
     }
 
-    searchUser() {
-        this.filteredUsers = this.allUsers.map(user => {
-            let id = user.id.toString();
-            let username = user.username.toLowerCase();
-            let password = user.password.toLowerCase();
-            let role = user.role.toLowerCase();
-            let searchText = this.searchText.toLowerCase();
-            if (id.includes(searchText) ||
-                username.includes(searchText) ||
-                password.includes(searchText) || 
-                role.includes(searchText)) {
-                return user;
-            }
-            return null;
-        }).filter(user => user);
+    searchUser(): boolean | User[] {
+        if (this.searchText) {
+            this.filteredUsers = this.allUsers.filter(user => {
+                const id = user.id.toString();
+                const username = user.username.toLowerCase();
+                const password = user.password.toLowerCase();
+                const role = user.role.toLowerCase();
+                const searchText = this.searchText.toLowerCase();
+                return id.includes(searchText) || username.includes(searchText) || password.includes(searchText) || role.includes(searchText);
+            });
+        }
+        return this.allUsers;
     }
 
     clearSearch() {
         this.searchText = '';
+    }
+
+    togglePassword(user: User): void {
+        user.hiddenPwd = !user.hiddenPwd;
     }
 
 }
