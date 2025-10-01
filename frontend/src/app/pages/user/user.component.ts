@@ -51,25 +51,26 @@ export class UserComponent implements OnInit {
         });
     }
 
-    searchUsers() {
-        this.filteredUsers = this.allUsers.map(user => {
-            let id = user.id.toString();
-            let username = user.username.toLowerCase();
-            let password = user.password.toLowerCase();
-            let role = user.role.toLowerCase();
-            let searchText = this.searchText.toLowerCase();
-            if (id.includes(searchText) ||
-                username.includes(searchText) || 
-                password.includes(searchText) ||
-                role.includes(searchText)) {
-                return user;
-            }
-            return null;
-        }).filter(user => user);
+    searchUsers(): boolean | User[] {
+        if (this.searchText) {
+            this.filteredUsers = this.allUsers.filter(user => {
+                const id = user.id.toString();
+                const username = user.username.toLowerCase();
+                const password = user.password.toLowerCase();
+                const role = user.role.toLowerCase();
+                const searchText = this.searchText.toLowerCase();
+                return id.includes(searchText) || username.includes(searchText) || password.includes(searchText) || role.includes(searchText);
+            });
+        }
+        return this.allUsers;
     }
 
     clearSearch() {
         this.searchText = '';
+    }
+
+    togglePassword(user: User): void {
+        user.hiddenPwd = !user.hiddenPwd;
     }
 
 }
