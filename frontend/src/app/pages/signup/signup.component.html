@@ -6,9 +6,6 @@
         (ngSubmit)="onSubmit()"
     >
         <h1 class="w-screen text-center text-slate-100 text-4xl font-bold">Sign Up</h1>
-        <p class="text-red-600" [hidden]="signUpForm.dirty || signUpForm.touched">{{ alertMessage }}</p>
-        <p class="text-green-600" [hidden]="signUpForm.dirty || signUpForm.touched">{{ successMessage }}</p>
-
         <div class="w-full flex flex-col items-center gap-1">
             <div class="w-full flex items-center relative">
                 <input 

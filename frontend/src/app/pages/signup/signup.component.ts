@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
 
 @Component({
     selector: 'app-signup',
@@ -14,8 +16,6 @@ export class SignupComponent implements OnInit {
 
     users!: User[];
     newUser: User = <User> { role: 'User' };
-    alertMessage: string = '';
-    successMessage: string = '';
 
     signUpForm = this.fb.group({
         username: ['', [Validators.required]],
@@ -35,7 +35,8 @@ export class SignupComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private titleService: Title
+        private titleService: Title,
+        private snackBar: MatSnackBar
     ) { 
         this.titleService.setTitle("Authentication System | Sign Up");
     }
@@ -64,11 +65,9 @@ export class SignupComponent implements OnInit {
         let uname: string = this.usernameControl.value;
         let pwd: string = this.passwordControl.value;
         if (this.accountExists(uname, pwd)) {
-            this.successMessage = "";
-            this.alertMessage = "This account already exists."
+            this.openSnackBar("This account already exists!", "circle-alert", "red");
         }
         else {
-            this.alertMessage = "";
             this.createAccount(uname, pwd);
         }
         this.signUpForm.reset();
@@ -83,12 +82,13 @@ export class SignupComponent implements OnInit {
         this.newUser = {
             ...this.newUser,
             username: uname,
-            password: pwd
+            password: pwd,
+            hiddenPwd: true
         };
 
         this.userService.createUser(this.newUser).subscribe({
             next: res => {
-                this.successMessage = "Account successfully created!";
+                this.openSnackBar("Account successfully created!", "circle-check", "green");
                 this.ngOnInit();
             },
             error: err => console.error("ERROR - Could not create account"),
@@ -130,6 +130,14 @@ export class SignupComponent implements OnInit {
 
     matchAll(str: string) {
         return this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
+    }
+
+    openSnackBar(message: string, icon: string, color: string) {
+        this.snackBar.openFromComponent(SnackbarMessageComponent, {
+            data: [icon, message],
+            duration: 5000, // clears after 5 secs
+            panelClass: [`bg-${color}-600`, 'text-slate-100'] // custom classes
+        });
     }
     
 }
