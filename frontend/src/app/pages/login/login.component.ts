@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
 
 @Component({
     selector: 'app-login',
@@ -15,7 +17,6 @@ export class LoginComponent implements OnInit {
 
     users!: User[];
     userID: number = 0;
-    invalidMsg: string = '';
     hidden: boolean = true;
 
     loginForm = this.fb.group({
@@ -27,7 +28,8 @@ export class LoginComponent implements OnInit {
         private fb: FormBuilder,
         private router: Router,
         private userService: UserService,
-        private titleService: Title
+        private titleService: Title,
+        private snackBar: MatSnackBar
     ) { 
         this.titleService.setTitle("Authentication System | Login");
     }
@@ -56,7 +58,7 @@ export class LoginComponent implements OnInit {
                 this.redirectUser();
             }
             else {
-                this.invalidMsg = 'Invalid login attempt.';
+                this.openSnackBar("Invalid login attempt.", "circle-alert", "red");
                 this.loginForm.reset();
             }
         }
@@ -100,6 +102,14 @@ export class LoginComponent implements OnInit {
 
     togglePassword() {
         this.hidden = !this.hidden;
+    }
+
+    openSnackBar(message: string, icon: string, color: string) {
+        this.snackBar.openFromComponent(SnackbarMessageComponent, {
+            data: [icon, message],
+            duration: 5000, // clears after 5 secs
+            panelClass: [`bg-${color}-600`, 'text-slate-100'] // custom classes
+        });
     }
 
 }
