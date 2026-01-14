@@ -14,8 +14,7 @@ import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackb
     standalone: false
 })
 export class LoginComponent implements OnInit {
-
-    users!: User[];
+    users: User[] = [];
     userID: number = 0;
     hidden: boolean = true;
 
@@ -37,8 +36,12 @@ export class LoginComponent implements OnInit {
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({
             next: data => this.users = data,
-            error: err => console.error("ERROR - Could not retrieve users"),
-            complete: () => console.log("SUCCESS - Users retrieved")
+            error: () => console.error("ERROR - Could not retrieve users"),
+            complete: () => {
+                this.userService.currentUser = undefined;
+                console.log("SUCCESS - Users retrieved");
+                console.log(this.users)
+            }
         });
     }
 
@@ -50,11 +53,13 @@ export class LoginComponent implements OnInit {
         return this.loginForm.get('password') as FormControl;
     }
 
-    onSubmit() {
+    onSubmit(): void {
         if (this.loginForm.valid) {
-            let uname: string = this.usernameControl.value;
-            let pwd: string = this.passwordControl.value;
-            if (this.accountExists(uname, pwd)) {
+            const account = <User>{
+                username: this.usernameControl.value,
+                password: this.passwordControl.value
+            }
+            if (this.accountExists(account)) {
                 this.redirectUser();
             }
             else {
@@ -68,47 +73,43 @@ export class LoginComponent implements OnInit {
         }
     }
 
-    accountExists(uname: string, pwd: string) {
-        let exists = false;
-        this.users.forEach(user => {
-            if (uname === user.username && pwd === user.password) {
-                this.userID = user.id;
-                exists = true;
-            }
-        });
-        return exists;
-    }
-
-    redirectUser() {
-        if (this.userID != 0) {
-            this.userService.getUser(this.userID).subscribe({
-                next: (user: User) => {
-                    switch (user.role) {
-                        case 'Administrator': this.router.navigateByUrl('/admin'); break;
-                        case 'Manager': this.router.navigateByUrl('/manager'); break;
-                        case 'User': this.router.navigateByUrl('/user'); break;
-                        default: break;
-                    }
-                },
-                error: err => console.error("User does not exist"),
-                complete: () => console.log("User loaded")
-            });
+    accountExists(account: User): boolean {
+        const foundAccount = this.users.find(user => user.username === account.username && user.password === account.password);
+        if (foundAccount) {
+            this.userID = foundAccount.id;
+            return true;
         }
+        return false;
     }
 
-    hasErrors(control: FormControl) {
+    redirectUser(): void {
+        this.userService.getUser(this.userID).subscribe({
+            next: (user: User) => {
+                switch (user.role) {
+                    case 'Administrator': this.router.navigate(['/admin']); break;
+                    case 'Manager': this.router.navigate(['/manager']); break;
+                    case 'User': this.router.navigate(['/user']); break;
+                    default: this.router.navigate(['/login']);
+                }
+            },
+            error: () => console.error("User does not exist"),
+            complete: () => console.log("User loaded")
+        });
+    }
+
+    hasErrors(control: FormControl): boolean {
         return control.invalid && (control.dirty || control.touched);
     }
 
-    togglePassword() {
+    togglePassword(): void {
         this.hidden = !this.hidden;
     }
 
-    openSnackBar(message: string, icon: string, color: string) {
+    openSnackBar(message: string, icon: string, color: string): void {
         this.snackBar.openFromComponent(SnackbarMessageComponent, {
-            data: [icon, message],
-            duration: 5000, // clears after 5 secs
-            panelClass: [`bg-${color}-600`, 'text-slate-100'] // custom classes
+            data: [color, icon, message],
+            duration: 5000,
+            panelClass: ['text-slate-100']
         });
     }
 

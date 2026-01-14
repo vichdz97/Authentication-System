@@ -1,7 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import { User } from 'src/app/interfaces/user';
-import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-navbar',
@@ -10,18 +7,23 @@ import { UserService } from 'src/app/services/user.service';
     standalone: false
 })
 export class NavbarComponent {
-
     @Input() user: any;
     isCollapsed: boolean = true;
+    showSidebar: boolean = false;
+    showLogoutModal: boolean = false;
 
-    constructor(
-        private userService: UserService,
-        private router: Router
-    ) { }
+    constructor() { }
 
-    logout() {
-        this.userService.currentUser = <User>{};
-        this.router.navigateByUrl('/login');
+    toggleSidebar(): void {
+        this.showSidebar = !this.showSidebar;
     }
 
+    toggleLogoutModal(e?: Event): void {
+        this.showSidebar = false;
+        this.showLogoutModal = !this.showLogoutModal;
+    }
+
+    stopPropagation(e: Event): void {
+        e.stopPropagation();
+    }
 }

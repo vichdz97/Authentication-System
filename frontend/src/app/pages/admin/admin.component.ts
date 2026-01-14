@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
 import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
@@ -14,9 +13,15 @@ import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackb
     standalone: false
 })
 export class AdminComponent implements OnInit {
-
-    allUsers!: User[];
     currentUser?: User;
+    allUsers: User[] = [];
+    filteredUsers: User[] = [];
+    searchText: string = '';
+
+    showUpdateModal: boolean = false;
+    showDeleteModal: boolean = false;
+    userToUpdate: User = <User>{};
+    userToDelete: User = <User>{};
 
     showUserForm: boolean = false;  
     userForm = this.fb.group({
@@ -25,13 +30,9 @@ export class AdminComponent implements OnInit {
         role: ['', [Validators.required]],
     });
 
-    searchText!: string;
-    filteredUsers: any;
-
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
-        private router: Router,
         private titleService: Title,
         private snackBar: MatSnackBar
     ) { 
@@ -39,12 +40,12 @@ export class AdminComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.currentUser = this.userService.currentUser;
         this.userService.getAllUsers().subscribe({
-            next: data => this.allUsers = data,
-            error: err => console.error("ERROR - Could not retrieve users"),
+            next: data => this.allUsers = this.userService.currentUser ? [this.userService.currentUser].concat(data.filter(user => user.id !== this.userService.currentUser?.id)) : data,
+            error: () => console.error("ERROR - Could not retrieve users"),
             complete: () => console.log("SUCCESS - Users retrieved")
         });
-        this.currentUser = this.userService.currentUser;
     }
 
     get usernameControl(): FormControl {
@@ -70,10 +71,10 @@ export class AdminComponent implements OnInit {
         let role: string = this.roleControl.value;
 
         if (this.accountExists(uname, pwd, role) || this.userWordExists(uname, pwd)) {
-            this.openSnackBar("These credentials already exists!", "circle-alert", "red");
+            this.openSnackBar("These credentials already exist!", "circle-alert", "red");
         }
         else {
-            let newUser: User = <User> {
+            let newUser: User = <User>{
                 username: uname,
                 password: pwd,
                 role,
@@ -81,13 +82,15 @@ export class AdminComponent implements OnInit {
             };
     
             this.userService.createUser(newUser).subscribe({
-                next: res => {
-                    this.openSnackBar("Account successfully created!", "circle-check", "green");
+                next: () => {
                     this.displayUserForm();
-                    this.ngOnInit();
+                    this.openSnackBar("Account successfully created!", "circle-check", "blue");
                 },
-                error: err => console.error("ERROR - Unable to create user"),
-                complete: () => console.log("SUCCESS - New user created")
+                error: () => console.error("ERROR - Unable to create user"),
+                complete: () => {
+                    console.log("SUCCESS - New user created");
+                    this.ngOnInit();
+                }
             });
         }
     }
@@ -98,40 +101,6 @@ export class AdminComponent implements OnInit {
 
     userWordExists(uname: string, pwd: string): boolean {
         return this.allUsers.some(user => user.username.match(uname) && user.password.match(pwd));
-    }
-
-    deleteUser(id: number): void {
-        this.userService.deleteUser(id).subscribe({
-            next: res => {
-                if (id === this.currentUser?.id) {
-                    this.router.navigateByUrl('error');
-                }
-                else {
-                    this.ngOnInit();
-                    this.allUsers = this.allUsers.filter(user => user.id !== id);
-                    this.searchUser();
-                }
-            },
-            error: err => console.error("ERROR - Could not delete user"),
-            complete: () => console.log("SUCCESS - User deleted")
-        });
-    }
-
-    updateUser(updatedUser: User): void {
-        if (updatedUser.id === this.currentUser?.id) {
-            this.userService.updateCurrentUser(updatedUser).subscribe({
-                next: res => this.ngOnInit(),
-                error: err => console.error("ERROR - Could not update user"),
-                complete: () => console.log("SUCCESS - User updated")
-            });
-        }
-        else {
-            this.userService.updateUser(updatedUser).subscribe({
-                next: res => this.ngOnInit(),
-                error: err => console.error("ERROR - Could not update user"),
-                complete: () => console.log("SUCCESS - User updated")
-            });
-        }
     }
 
     searchUser(): boolean | User[] {
@@ -156,11 +125,27 @@ export class AdminComponent implements OnInit {
         user.hiddenPwd = !user.hiddenPwd;
     }
 
+    toggleUpdateModal(user?: User): void {
+        this.showUpdateModal = !this.showUpdateModal;
+        if (this.showUpdateModal && user ) this.userToUpdate = user;
+        this.ngOnInit();
+    }
+
+    toggleDeleteModal(user?: User): void {
+        this.showDeleteModal = !this.showDeleteModal;
+        if (this.showDeleteModal && user) this.userToDelete = user;
+        this.ngOnInit();
+    }
+
+    stopPropagation(e: Event): void {
+        e.stopPropagation();
+    }
+
     openSnackBar(message: string, icon: string, color: string) {
         this.snackBar.openFromComponent(SnackbarMessageComponent, {
-            data: [icon, message],
-            duration: 5000, // clears after 5 secs
-            panelClass: [`bg-${color}-600`, 'text-slate-100'] // custom classes
+            data: [color, icon, message],
+            duration: 5000,
+            panelClass: ['text-slate-100']
         });
     }
 

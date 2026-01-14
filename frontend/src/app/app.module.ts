@@ -39,7 +39,9 @@ import {
     Plus, 
     CircleCheck, 
     ShieldUser,
-    ShieldAlert
+    ShieldAlert,
+    Menu,
+    LoaderCircle
 } from 'lucide-angular';
 
 @NgModule({ 
@@ -79,7 +81,9 @@ import {
             Plus,
             CircleCheck, 
             ShieldUser,
-            ShieldAlert
+            ShieldAlert,
+            Menu,
+            LoaderCircle
         })
     ], 
     providers: [

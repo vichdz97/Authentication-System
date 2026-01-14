@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -10,15 +9,20 @@ import { UserService } from 'src/app/services/user.service';
     standalone: false
 })
 export class LogoutComponent {
+    @Output() dataEvent = new EventEmitter<any>();
 
     constructor(
         private userService: UserService,
         private router: Router
     ) { }
 
-    logout() {
-        this.userService.currentUser = <User>{};
-        this.router.navigateByUrl('/login');
+    closeModal(): void {
+        this.dataEvent.emit();
+    }
+
+    logout(): void {
+        this.userService.currentUser = undefined;
+        this.router.navigate(['/login']);
     }
     
 }

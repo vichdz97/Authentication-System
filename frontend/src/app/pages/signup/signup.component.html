@@ -41,26 +41,14 @@
                 <lucide-icon name="check" [hidden]="!matchAll(passwordControl.value)" class="absolute top-0 right-0 m-1 translate-x-5 text-green-600" />
             </div>
             @if (passwordControl.value) {
-                <div class="text-sm">
-                    <div class="flex items-center gap-2 {{ passwordControl.value.length >= 6 ? 'text-green-600' : 'text-red-600' }}">
-                        <lucide-icon [name]="passwordControl.value.length >= 6 ? 'check' : 'x'" class="w-[1.25em]" />
-                        <span>{{ req1 }}</span>
-                    </div>
-                    <div class="flex items-center gap-2 {{ matchUpper(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
-                        <lucide-icon [name]="matchUpper(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
-                        <span>{{ req2 }}</span>
-                    </div>
-                    <div class="flex items-center gap-2 {{ matchLower(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
-                        <lucide-icon [name]="matchLower(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
-                        <span>{{ req3 }}</span>
-                    </div>
-                    <div class="flex items-center gap-2 {{ matchNum(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
-                        <lucide-icon [name]="matchNum(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
-                        <span>{{ req4 }}</span>
-                    </div>
-                    <div class="flex items-center gap-2 {{ matchSpecial(passwordControl.value) ? 'text-green-600' : 'text-red-600' }}">
-                        <lucide-icon [name]="matchSpecial(passwordControl.value) ? 'check' : 'x'" class="w-[1.25em]" />
-                        <span>{{ req5 }}</span>
+                <div class="w-full flex flex-col items-center">
+                    <div class="flex flex-col">
+                        @for (req of pwdReqs; let i = $index; track i) {
+                            <p class="flex items-center gap-2 {{ req.check(passwordControl.value) ? 'text-green-700' : 'text-red-600' }}">
+                                <lucide-icon [name]="req.check(passwordControl.value) ? 'check' : 'x'" size="16" />
+                                <span>{{ req.message }}</span>
+                            </p>
+                        }
                     </div>
                 </div>
             }
@@ -101,3 +89,9 @@
         Already have an account? <br class="md:hidden">Sign in!
     </a>
 </div>
+
+@if (showLoadingModal) {
+    <div class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+        <app-loading [users]="users" />
+    </div>
+}

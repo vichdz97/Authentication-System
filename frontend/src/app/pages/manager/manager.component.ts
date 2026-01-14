@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
 
@@ -11,52 +10,29 @@ import { UserService } from 'src/app/services/user.service';
     standalone: false
 })
 export class ManagerComponent implements OnInit {
-
-    allUsers!: User[];
     currentUser?: User;
-
+    allUsers: User[] = [];
+    filteredUsers: User[] = [];
     searchText: string = '';
-    filteredUsers: any;
+
+    showUpdateModal: boolean = false;
+    showDeleteModal: boolean = false;
+    userToUpdate: User = <User>{};
+    userToDelete: User = <User>{};
 
     constructor(
         private userService: UserService,
-        private router: Router,
         private titleService: Title
     ) { 
         this.titleService.setTitle("Authentication System | Manager");
     }
 
     ngOnInit(): void {
-        this.userService.getAllUsers().subscribe({
-            next: data => this.allUsers = data,
-            error: err => console.error("ERROR - Could not display users"),
-            complete:() => console.log("SUCCESS - Users displayed")
-        });
         this.currentUser = this.userService.currentUser;
-    }
-
-    deleteUser(id: number): void {
-        this.userService.deleteUser(id).subscribe({
-            next: res => {
-                if (id === this.currentUser?.id) {
-                    this.router.navigateByUrl('error');
-                }
-                else {
-                    this.ngOnInit();
-                    this.allUsers = this.allUsers.filter(user => user.id !== id);
-                    this.searchUser();
-                }
-            },
-            error: err => console.error("ERROR - Could not delete user"),
-            complete: () => console.log("SUCCESS - User deleted")
-        });
-    }
-
-    updateUser(updatedUser: User): void {
-        this.userService.updateCurrentUser(updatedUser).subscribe({
-            next: res => this.ngOnInit(),
-            error: err => console.error("ERROR - Could not update user"),
-            complete: () => console.log("SUCCESS - User updated")
+        this.userService.getAllUsers().subscribe({
+            next: data => this.allUsers = this.userService.currentUser ? [this.userService.currentUser].concat(data.filter(user => user.id !== this.userService.currentUser?.id)) : data,
+            error: () => console.error("ERROR - Could not display users"),
+            complete:() => console.log("SUCCESS - Users displayed")
         });
     }
 
@@ -74,7 +50,7 @@ export class ManagerComponent implements OnInit {
         return this.allUsers;
     }
 
-    clearSearch() {
+    clearSearch(): void {
         this.searchText = '';
     }
 
@@ -82,4 +58,19 @@ export class ManagerComponent implements OnInit {
         user.hiddenPwd = !user.hiddenPwd;
     }
 
+    toggleUpdateModal(user?: User): void {
+        this.showUpdateModal = !this.showUpdateModal;
+        if (this.showUpdateModal && user ) this.userToUpdate = user;
+        this.ngOnInit();
+    }
+
+    toggleDeleteModal(user?: User): void {
+        this.showDeleteModal = !this.showDeleteModal;
+        if (this.showDeleteModal && user) this.userToDelete = user;
+        this.ngOnInit();
+    }
+
+    stopPropagation(e: Event): void {
+        e.stopPropagation();
+    }
 }

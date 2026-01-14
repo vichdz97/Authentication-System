@@ -7,22 +7,21 @@ import { UserService } from '../services/user.service';
     providedIn: 'root'
 })
 export class AuthGuard  {
-
     constructor(
         private userService: UserService,
         private router: Router
     ) { }
 
     canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        return this.checkLoggedIn();
-    }
-
-    checkLoggedIn(): boolean {
         if (this.userService.isLoggedIn) {
-            return true;
+            const userRole = this.userService.currentUser?.role;
+            const expectedRole = this.router.url.split('/')[1]; // "admin", "manager", "user"
+            if (userRole === expectedRole || expectedRole === 'login' || expectedRole === 'signup') {
+                return true;
+            }
         }
-        this.router.navigateByUrl('/login');
+        
+        this.router.navigate(['/login']);
         return false;
     }
-  
 }

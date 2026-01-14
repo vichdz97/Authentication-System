@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
 
 @Component({
     selector: 'app-loading',
@@ -10,38 +12,41 @@ import { UserService } from 'src/app/services/user.service';
     standalone: false
 })
 export class LoadingComponent implements OnInit {
-
-    @Input() newUser!: User;
-    users!: User[];
+    @Input() users: User[] = [];
 
     constructor(
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
-        this.userService.getAllUsers().subscribe({
-            next: data => this.users = data,
-            error: err => console.error("ERROR - Could not retrieve users"),
-            complete: () => {
-                console.log("SUCCESS - Users retrieved");
-                this.redirect();
-            }
-        });
-    }
-
-    redirect() {
         setTimeout(() => { 
-            this.users.forEach(user => {
-                if (user.username === this.newUser.username && user.password === this.newUser.password) {
-                    this.userService.getUser(user.id).subscribe({
-                        next: res =>  this.router.navigateByUrl('/user'),
-                        error: err => console.error("ERROR - User does not exist"),
-                        complete: () => console.log(`SUCCESS - User #${user.id} retrieved`)
-                    })
+            const allAccounts: User[] = this.users;
+            const newAccount: User = allAccounts.pop() ?? <User>{};
+            this.userService.getUser(newAccount.id).subscribe({
+                next: (user: User) => {
+                    switch (user.role) {
+                        case 'Administrator': this.router.navigate(['/admin']); break;
+                        case 'Manager': this.router.navigate(['/manager']); break;
+                        case 'User': this.router.navigate(['/user']); break;
+                        default: this.router.navigate(['/login']);
+                    }
+                },
+                error: () => console.error("User does not exist"),
+                complete: () => {
+                    this.openSnackBar("Account successfully created!", "circle-check", "blue");
+                    console.log("User loaded");
                 }
-            });  
+            });
         }, 1500);
     }
 
+    openSnackBar(message: string, icon: string, color: string): void {
+        this.snackBar.openFromComponent(SnackbarMessageComponent, {
+            data: [color, icon, message],
+            duration: 5000,
+            panelClass: ['text-slate-100']
+        });
+    }
 }

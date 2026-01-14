@@ -1,15 +1,20 @@
-<div class="w-full p-4 fixed top-0 z-50 backdrop-blur-md">
-    <nav class="flex justify-between items-center text-slate-100">
+<div class="w-full fixed top-0 z-50 bg-sky-500/50 backdrop-blur-md">
+    <nav class="flex justify-between items-center text-slate-100 p-4">
         <h1 class="flex items-center gap-2">
             <lucide-icon name="shield-user" class="text-slate-100" size="40" strokeWidth="1" />
             <span class="font-semibold hover:cursor-default">Authentication System</span>
         </h1>
 
-        <ul class="flex items-center gap-4">
+        <div class="md:hidden hover:cursor-pointer" (click)="toggleSidebar()" [hidden]="showSidebar">
+            <lucide-icon name="menu" />
+        </div>
+
+        <!-- DESKTOP -->
+        <ul class="hidden md:flex items-center gap-4">
             @if (user) {
                 <li>Welcome, {{ user.username }}!</li>
                 <li class="transition-all hover:opacity-80">
-                    <a class="hover:cursor-default focus:outline-sky-500" (click)="logout()">Logout</a>
+                    <a class="hover:cursor-default focus:outline-sky-500" (click)="toggleLogoutModal()">Logout</a>
                 </li>
             }
             @else {
@@ -23,3 +28,34 @@
         </ul>
     </nav>
 </div>
+
+<!-- MOBILE -->
+@if (showSidebar) {
+    <nav class="md:hidden text-slate-100 bg-sky-500/50 backdrop-blur-lg w-1/2 h-screen fixed top-0 right-0 p-4 z-60">
+        <lucide-icon name="x" size="25" (click)="toggleSidebar()" />
+        <ul class="flex flex-col items-end gap-2">
+            @if (user) {
+                <li class="pt-2">Welcome, {{ user.username }}!</li>
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default focus:outline-sky-500" (click)="toggleLogoutModal()">Logout</a>
+                </li>
+            }
+            @else {
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default focus:outline-sky-500" routerLink="/login">Login</a>
+                </li>
+                <li class="transition-all hover:opacity-80">
+                    <a class="hover:cursor-default focus:outline-sky-500" routerLink="/signup">Sign Up</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@if (showLogoutModal) {
+    <div class="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50" (click)="toggleLogoutModal()">
+        <div (click)="stopPropagation($event)">
+            <app-logout (dataEvent)="toggleLogoutModal($event)"></app-logout>
+        </div>
+    </div>
+}

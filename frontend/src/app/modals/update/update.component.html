@@ -1,65 +1,67 @@
-<div class="modal-header">
-    <h5>Update user information</h5>
-    <button type="button" class="btn" aria-label="Close">&times;</button>
-</div>
-<div class="modal-body">
-    <p class="text-danger text-center m-0" [hidden]="errorMessage == '' || updateUserForm.dirty || updateUserForm.touched">{{ errorMessage }}</p>
-    <form [formGroup]="updateUserForm" class="mb-3">
-        <label for="uname" class="form-label mt-2 mb-1">Username</label>
-        <input type="text" id="uname" class="form-control" formControlName="updatedName" placeholder="{{ user?.username }}">
-    
-        <label for="pwd" class="form-label mt-2 mb-1">Password</label>
-        <ng-container *ngIf="currentUser?.role === 'Administrator'; else notAdmin">
-            <input type="text" id="pwd" class="form-control" formControlName="updatedPassword" placeholder="{{ user?.password }}">
-            <label for="role" class="form-label mt-2 mb-1">Select a Role:</label>
-            <select name="selectRoles" id="role" class="form-control" formControlName="updatedRole">
-                <option value="" disabled selected>Previous Role: {{ user?.role }}</option>
-                <option value="Administrator" [hidden]="user?.role === 'Administrator'">Administrator</option>
-                <option value="Manager" [hidden]="user?.role === 'Manager'">Manager</option>
-                <option value="User" [hidden]="user?.role === 'User'">User</option>
-            </select>
-        </ng-container>
+<div class="max-w-xl bg-sky-400/90 p-10 m-5 rounded-xl flex flex-col gap-4">
+    <h5 class="text-slate-100 text-center text-4xl font-bold">Update Information</h5>
+    <form [formGroup]="updateUserForm" class="flex flex-col items-center gap-2">
+        <div class="w-full flex flex-col">
+            <label for="uname" class="self-start text-slate-100">Username</label>
+            <input 
+                class="px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500" 
+                type="text" 
+                id="uname" 
+                formControlName="updatedName" 
+                placeholder="{{ user?.username }}"
+            />
+        </div>
 
-        <ng-template #notAdmin>
-            <input type="text" id="pwd" class="form-control" formControlName="updatedPassword" placeholder="{{ user?.password }}"
-                popoverTitle="Requirements" placement="top" container="body">
-        </ng-template>
+        @if (currentUser?.role === "Administrator") {
+            <div class="w-full flex flex-col">
+                <label for="pwd" class="self-start text-slate-100">Password</label>
+                <input 
+                    class="px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500" 
+                    type="text" 
+                    id="pwd" 
+                    formControlName="updatedPassword" 
+                    placeholder="{{ user?.password }}"
+                />
+            </div>
+            <div class="w-full flex flex-col">
+                <label for="role" class="self-start text-slate-100">Role</label>
+                <select required name="selectRoles" id="role" formControlName="updatedRole" class="px-3 py-2 bg-slate-100 rounded-2xl invalid:text-slate-400 focus:outline-sky-500">
+                    <option value="" disabled selected>{{ user?.role }}</option>
+                    <option value="Administrator" [hidden]="user?.role === 'Administrator'">Administrator</option>
+                    <option value="Manager" [hidden]="user?.role === 'Manager'">Manager</option>
+                    <option value="User" [hidden]="user?.role === 'User'">User</option>
+                </select>
+            </div>
+        }
+        @else {
+            <div class="w-full flex flex-col">
+                <label for="pwd" class="self-start text-slate-100">New Password</label>
+                <input 
+                    class="w-full px-3 py-2 bg-slate-100 rounded-2xl placeholder-sm placeholder-slate-400 focus:outline-sky-500" 
+                    type="text" 
+                    id="pwd" 
+                    formControlName="updatedPassword" 
+                    placeholder="{{ user?.password }}"
+                />
+            </div>
+            <div class="w-full flex flex-col items-center" [hidden]="!updatedPasswordControl.dirty || !updatedPasswordControl.value">
+                <div class="flex flex-col">
+                    @for (req of pwdReqs; let i = $index; track i) {
+                        <p class="flex items-center gap-2 {{ req.check(updatedPasswordControl.value) ? 'text-green-700' : 'text-red-600' }}">
+                            <lucide-icon [name]="req.check(updatedPasswordControl.value) ? 'check' : 'x'" size="16" />
+                            <span>{{ req.message }}</span>
+                        </p>
+                    }
+                </div>
+            </div>
+        }
     </form>
+    <div class="flex gap-2 mt-2 text-slate-100">
+        <button class="flex-1 bg-slate-500 p-2 rounded-full transition-colors hover:bg-slate-600" (click)="closeModal()">Cancel</button>
+        <button class="flex-1 p-2 rounded-full text-slate-100 transition-colors {{ disableUpdateBtn() ? 'bg-blue-500/50 hover:cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}}" 
+            (click)="updateUser()" 
+            [disabled]="disableUpdateBtn()">
+            Update
+        </button>
+    </div>
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark">Cancel</button>
-    <button type="button" class="btn btn-warning" (click)="updateUser()" [disabled]="disableUpdateBtn()">Update</button>
-</div>
-
-<ng-template #requirements>
-    <ng-container *ngIf="updatedPasswordControl.value?.length >= 6; else tooShort">
-        <p class="text-success"><i class="bi bi-check2"></i> {{ req1 }}</p>
-    </ng-container>
-    <ng-template #tooShort>
-        <p class="text-danger"><i class="bi bi-x"></i> {{ req1 }}</p>
-    </ng-template>
-    <ng-container *ngIf="matchUpper(updatedPasswordControl.value); else noUpper">
-        <p class="text-success"><i class="bi bi-check2"></i> {{ req2 }}</p>
-    </ng-container>
-    <ng-template #noUpper>
-        <p class="text-danger"><i class="bi bi-x"></i> {{ req2 }}</p>
-    </ng-template>
-    <ng-container *ngIf="matchLower(updatedPasswordControl.value); else noLower">
-        <p class="text-success"><i class="bi bi-check2"></i> {{ req3 }}</p>
-    </ng-container>
-    <ng-template #noLower>
-        <p class="text-danger"><i class="bi bi-x"></i> {{ req3 }}</p>
-    </ng-template>
-    <ng-container *ngIf="matchNum(updatedPasswordControl.value); else noNum">
-        <p class="text-success"><i class="bi bi-check2"></i> {{ req4 }}</p>
-    </ng-container>
-    <ng-template #noNum>
-        <p class="text-danger"><i class="bi bi-x"></i> {{ req4 }}</p>
-    </ng-template>
-    <ng-container *ngIf="matchSpecial(updatedPasswordControl.value); else noSpecial">
-        <p class="text-success"><i class="bi bi-check2"></i> {{ req5 }}</p>
-    </ng-container>
-    <ng-template #noSpecial>
-        <p class="text-danger"><i class="bi bi-x"></i> {{ req5 }}</p>
-    </ng-template>
-</ng-template>

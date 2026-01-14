@@ -1,7 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarMessageComponent } from 'src/app/shared/snackbar-message/snackbar-message.component';
 
 @Component({
     selector: 'app-update',
@@ -10,40 +12,37 @@ import { UserService } from 'src/app/services/user.service';
     standalone: false
 })
 export class UpdateComponent implements OnInit {
-
-    @Input() userID!: number;
     @Input() currentUser?: User;
-    allUsers?: User[];
-    user?: User;
-    errorMessage: string = '';
+    @Input() user: User | null = null;
+    @Output() dataEvent = new EventEmitter<any>();
+    
+    allUsers: User[] = [];
+
     updateUserForm = this.fb.group({
         updatedName: '',
         updatedPassword: '',
         updatedRole: '',
     });
 
-    req1: string = "At least 6 characters"
-    req2: string = "At least 1 uppercase letter";
-    req3: string = "At least 1 lowercase letter";
-    req4: string = "At least 1 number";
-    req5: string = "At least 1 special character";
+    pwdReqs: { message: string, check: (str: string) => boolean | RegExpMatchArray }[] = [
+        { message: "At least 6 characters", check: (value: string) => value?.length >= 6 },
+        { message: "At least 1 uppercase letter", check: this.matchUpper },
+        { message: "At least 1 lowercase letter", check: this.matchLower },
+        { message: "At least 1 number", check: this.matchNum },
+        { message: "At least 1 special character", check: this.matchSpecial },
+    ];
 
     constructor(
         private fb: UntypedFormBuilder,
-        private userService: UserService
+        private userService: UserService,
+        private snackBar: MatSnackBar
     ) { }
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({
             next: data => this.allUsers = data,
-            error: err => console.error("ERROR - Could not retrieve all users"),
+            error: () => console.error("ERROR - Could not retrieve all users"),
             complete: () => console.log("SUCCESS - All users retrieved")
-        });
-
-        this.userService.getUserToModify(this.userID).subscribe({
-            next: user => this.user = user,
-            error: err => console.error("ERROR - Could not retrieve user"),
-            complete: () => console.log("SUCCESS - User retrieved")
         });
     }
 
@@ -71,7 +70,15 @@ export class UpdateComponent implements OnInit {
         (this.updatedPasswordControl.value === this.user?.password);
     }
 
-    updateUser() {
+    accountExists(uname?: string, pwd?: string, role?: string): boolean {
+        return this.allUsers?.some(user => uname === user.username && pwd === user.password && role === user.role);
+    }
+
+    userWordExists(uname?: string, pwd?: string): boolean {
+        return this.allUsers?.some(user => uname === user.username && pwd === user.password);
+    }
+
+    updateUser(): void {
         let updatedUser: User = <User> {
             ...this.user,
             username: this.updatedNameControl.value ? this.updatedNameControl.value : this.user?.username,
@@ -79,53 +86,67 @@ export class UpdateComponent implements OnInit {
             role: this.updatedRoleControl.value ? this.updatedRoleControl.value : this.user?.role
         };
 
-        if (this.accountExists(updatedUser.username, updatedUser.password, updatedUser.role)) {
-            this.errorMessage = "This account already exists!";
+        if (this.accountExists(updatedUser.username, updatedUser.password, updatedUser.role) || this.userWordExists(updatedUser.username, updatedUser.password)) {
+            this.openSnackBar("These credentials already exist!", "circle-alert", "red");
             this.updateUserForm.reset();
         }
-        else if (this.userWordExists(updatedUser.username, updatedUser.password)) {
-            this.errorMessage = "This username and password already exists!";
-            this.updateUserForm.reset();
+        else {
+            this.submitUpdatedUser(updatedUser);
         }
     }
 
-    accountExists(uname?: string, pwd?: string, role?: string): boolean {
-        let exists = false;
-        this.allUsers?.forEach(user => {
-            if (uname === user.username && pwd === user.password && role === user.role) {
-                exists = true;
-            }
-        });
-        return exists;
+    submitUpdatedUser(updatedUser: User): void {
+        if (updatedUser.id === this.currentUser?.id) {
+            this.userService.updateCurrentUser(updatedUser).subscribe({
+                next: () => {
+                    this.openSnackBar("User successfully updated!", "circle-check", "blue");
+                    this.closeModal();
+                },
+                error: () => console.error("ERROR - Could not update user"),
+                complete: () => console.log("SUCCESS - User updated")
+            });
+        }
+        else {
+            this.userService.updateUser(updatedUser).subscribe({
+                next: () => {
+                    this.openSnackBar("User successfully updated!", "circle-check", "blue");
+                    this.closeModal();
+                },
+                error: () => console.error("ERROR - Could not update user"),
+                complete: () => console.log("SUCCESS - User updated")
+            });
+        }
     }
 
-    userWordExists(uname?: string, pwd?: string): boolean {
-        let exists = false;
-        this.allUsers?.forEach(user => {
-            if (uname === user.username && pwd === user.password) {
-                exists = true;
-            }
-        });
-        return exists;
+    matchUpper(str: string): RegExpMatchArray {
+        return str.match(/^.*[A-Z].*$/)!;
     }
 
-    matchUpper(str: string) {
-        return RegExp(/^.*[A-Z].*$/).exec(str);
-    }
-
-    matchLower(str: string) {
-        return RegExp(/^.*[a-z].*$/).exec(str);
+    matchLower(str: string): RegExpMatchArray {
+        return str.match(/^.*[a-z].*$/)!;
     }
     
-    matchNum(str: string) {
-        return RegExp(/^.*[0-9].*$/).exec(str);
+    matchNum(str: string): RegExpMatchArray {
+        return str.match(/^.*[0-9].*$/)!;
     }
 
-    matchSpecial(str: string) {
-        return RegExp(/^.*[~`!@#$%^&*(){}[\]+=|\\/?<>,.:;"'_-].*$/).exec(str);
+    matchSpecial(str: string): RegExpMatchArray {
+        return str.match(/^.*[~`!@#$%^&*(){}[\]+=|\\/?<>,.:;"'_-].*$/)!;
     }
 
-    matchAll(str: string) {
+    matchAll(str: string): boolean | RegExpMatchArray {
         return this.updatedPasswordControl.value?.length >= 6 && this.matchUpper(str) && this.matchLower(str) && this.matchNum(str) && this.matchSpecial(str);
+    }
+
+    closeModal(): void {
+        this.dataEvent.emit();
+    }
+
+    openSnackBar(message: string, icon: string, color: string): void {
+        this.snackBar.openFromComponent(SnackbarMessageComponent, {
+            data: [color, icon, message],
+            duration: 5000,
+            panelClass: ['text-slate-100']
+        });
     }
 }
