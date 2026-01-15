@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "admin",
+      "role": "Administrator",
+      "hiddenPwd": true
+    },
+    {
+      "id": "2",
+      "username": "manager",
+      "password": "manager",
+      "role": "Manager",
+      "hiddenPwd": true
+    },
+    {
+      "id": "3",
+      "username": "user",
+      "password": "user",
+      "role": "User",
+      "hiddenPwd": true
+    },
+    {
+      "id": "de8e",
+      "username": "johndoe",
+      "password": "jd123",
+      "role": "User",
+      "hiddenPwd": true
+    },
+    {
+      "id": "74bd",
+      "role": "Administrator",
+      "username": "jane",
+      "password": "jane",
+      "hiddenPwd": true
+    },
+    {
+      "id": "87f6",
+      "username": "jenny",
+      "password": "jenny",
+      "role": "Manager",
+      "hiddenPwd": true
+    },
+    {
+      "id": "b455",
+      "role": "User",
+      "username": "vichdz97",
+      "password": "Victor!Auth21",
+      "hiddenPwd": true
+    }
+  ]
+}
