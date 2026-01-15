@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url: "https://my-json-server.typicode.com/vichdz97/fakeapi/users"
+  url: "https://app-o6kacrfbwq-uc.a.run.app"
 };
 
 /*

@@ -23,11 +23,11 @@ export class UserService {
     }
 
     getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(this.url);
+        return this.http.get<User[]>(`${this.url}/api/read`);
     }
   
     getUser(id: number): Observable<User> {
-        return this.http.get<User>(`${this.url}/${id}`)
+        return this.http.get<User>(`${this.url}/api/read/${id}`)
             .pipe(
                 map((user: User) => {
                     this.currentUser = user;
@@ -37,19 +37,19 @@ export class UserService {
     }
 
     getUserToModify(id: number): Observable<User> {
-        return this.http.get<User>(`${this.url}/${id}`);
+        return this.http.get<User>(`${this.url}/api/read/${id}`);
     }
 
     createUser(user: User): Observable<User> {
-        return this.http.post<User>(this.url, user, httpOptions);
+        return this.http.post<User>(`${this.url}/api/create`, user, httpOptions);
     }
 
     updateUser(user: User): Observable<void> {
-        return this.http.put<void>(`${this.url}/${user.id}`, user, httpOptions);
+        return this.http.put<void>(`${this.url}/api/update/${user.id}`, user, httpOptions);
     }
 
     updateCurrentUser(user: User): Observable<User> {
-        return this.http.put<User>(`${this.url}/${user.id}`, user, httpOptions)
+        return this.http.put<User>(`${this.url}/api/update/${user.id}`, user, httpOptions)
             .pipe(
                 map((user: User) => {
                     this.currentUser = user;
@@ -59,7 +59,7 @@ export class UserService {
     }
 
     deleteUser(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.url}/${id}`);
+        return this.http.delete<void>(`${this.url}/api/delete/${id}`);
     }
 
 }
