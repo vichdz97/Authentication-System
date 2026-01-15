@@ -40,7 +40,6 @@ export class LoginComponent implements OnInit {
             complete: () => {
                 this.userService.currentUser = undefined;
                 console.log("SUCCESS - Users retrieved");
-                console.log(this.users)
             }
         });
     }
